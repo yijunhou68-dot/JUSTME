@@ -3,12 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="portfolio-version" content="v10-root-assets">
 <meta name="theme-color" content="#F5F6F8">
 <meta name="description" content="侯易君 Jasmine 的个人作品集。中山大学历史学本科生，关注 AI 产品、用户研究与数据运营。">
 <title>侯易君 Jasmine · Portfolio</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@600;700;800&family=JetBrains+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500;700;900&family=Syne:wght@500;700;800&display=swap" rel="stylesheet">
 <style>
 :root {
   color-scheme: light;
@@ -16,10 +14,10 @@
   --soft: #5b616e;
   --quiet: #9aa0ac;
   --ease: cubic-bezier(.16,1,.3,1);
-  --sans: 'Noto Sans SC', 'Microsoft YaHei', 'PingFang SC', system-ui, sans-serif;
-  --display: 'Syne', 'Arial Black', system-ui, sans-serif;
-  --mono: 'JetBrains Mono', Consolas, monospace;
-  --figures: 'DM Sans', 'Segoe UI', var(--sans);
+  --sans: 'PingFang SC', 'Microsoft YaHei', system-ui, sans-serif;
+  --display: 'Arial Black', 'Segoe UI', system-ui, sans-serif;
+  --mono: Consolas, 'SFMono-Regular', monospace;
+  --figures: 'Segoe UI', 'Helvetica Neue', var(--sans);
 }
 * { box-sizing: border-box; }
 html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; }
@@ -365,6 +363,15 @@ button:active:not(.pocket,.tab),.contact-action:active { scale: .97; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
 }
+.reading .stage { visibility: hidden; }
+.fig button[aria-busy="true"] { cursor: progress; }
+@media (max-width:650px), (pointer:coarse) {
+  .reader,.pocket-glass { backdrop-filter: none; -webkit-backdrop-filter: none; }
+  .reader { clip-path: none !important; box-shadow: 0 7px 22px #29334c18; }
+  .pleat { display: none; }
+  .sheet,.board { box-shadow: none; }
+  .reader-scroll { -webkit-overflow-scrolling: touch; }
+}
 </style>
 </head>
 <body>
@@ -551,6 +558,132 @@ const imageSizes = {
     822
   ]
 };
+const imageAssets = {
+  "contact-wechat.png": {
+    "preview": "contact-wechat.png",
+    "full": "contact-wechat.png"
+  },
+  "danmei-competition.jpg": {
+    "preview": "danmei-competition.jpg.webp",
+    "full": "danmei-competition.jpg"
+  },
+  "danmei-survey.jpg": {
+    "preview": "danmei-survey.jpg.webp",
+    "full": "danmei-survey.jpg"
+  },
+  "forest-strategy.jpg": {
+    "preview": "forest-strategy.jpg.webp",
+    "full": "forest-strategy.jpg"
+  },
+  "game-survey.jpg": {
+    "preview": "game-survey.jpg.webp",
+    "full": "game-survey.jpg"
+  },
+  "light-poster.png": {
+    "preview": "light-poster.png.webp",
+    "full": "light-poster.png"
+  },
+  "loreal-concept.jpg": {
+    "preview": "loreal-concept.jpg.webp",
+    "full": "loreal-concept.jpg"
+  },
+  "me-illu.jpg": {
+    "preview": "me-illu.jpg.webp",
+    "full": "me-illu.jpg"
+  },
+  "me-photo.jpg": {
+    "preview": "me-photo.jpg.webp",
+    "full": "me-photo.jpg"
+  },
+  "ops-editorial-cinema.png": {
+    "preview": "ops-editorial-cinema.png.webp",
+    "full": "ops-editorial-cinema.png"
+  },
+  "ops-editorial-dunhuang.png": {
+    "preview": "ops-editorial-dunhuang.png.webp",
+    "full": "ops-editorial-dunhuang.png"
+  },
+  "ops-editorial-purple.png": {
+    "preview": "ops-editorial-purple.png.webp",
+    "full": "ops-editorial-purple.png"
+  },
+  "ops-editorial.png": {
+    "preview": "ops-editorial.png.webp",
+    "full": "ops-editorial.png"
+  },
+  "ops-poster-numbed.png": {
+    "preview": "ops-poster-numbed.png.webp",
+    "full": "ops-poster-numbed.png"
+  },
+  "ops-poster-plastic.png": {
+    "preview": "ops-poster-plastic.png.webp",
+    "full": "ops-poster-plastic.png"
+  },
+  "ops-ppt-danmei.png": {
+    "preview": "ops-ppt-danmei.png.webp",
+    "full": "ops-ppt-danmei.png"
+  },
+  "p11-01.jpg": {
+    "preview": "p11-01.jpg.webp",
+    "full": "p11-01.jpg"
+  },
+  "p11-02.jpg": {
+    "preview": "p11-02.jpg.webp",
+    "full": "p11-02.jpg"
+  },
+  "p2-01.jpg": {
+    "preview": "p2-01.jpg.webp",
+    "full": "p2-01.jpg"
+  },
+  "p2-04.jpg": {
+    "preview": "p2-04.jpg",
+    "full": "p2-04.jpg"
+  },
+  "p2-script.png": {
+    "preview": "p2-script.png.webp",
+    "full": "p2-script.png"
+  },
+  "p3-01.jpg": {
+    "preview": "p3-01.jpg.webp",
+    "full": "p3-01.jpg"
+  },
+  "p3-03.jpg": {
+    "preview": "p3-03.jpg.webp",
+    "full": "p3-03.jpg"
+  },
+  "p4-01.png": {
+    "preview": "p4-01.png.webp",
+    "full": "p4-01.png"
+  },
+  "p4-02.png": {
+    "preview": "p4-02.png.webp",
+    "full": "p4-02.png"
+  },
+  "p4-03.jpg": {
+    "preview": "p4-03.jpg.webp",
+    "full": "p4-03.jpg"
+  },
+  "p4-04.jpg": {
+    "preview": "p4-04.jpg",
+    "full": "p4-04.jpg"
+  },
+  "star-competitor-excerpt.png": {
+    "preview": "star-competitor-excerpt.png.webp",
+    "full": "star-competitor-excerpt.png"
+  },
+  "star-metrics-excerpt.png": {
+    "preview": "star-metrics-excerpt.png.webp",
+    "full": "star-metrics-excerpt.png"
+  },
+  "star-report-template.png": {
+    "preview": "star-report-template.png.webp",
+    "full": "star-report-template.png"
+  }
+};
+function assetURL(file, full = false) {
+  const asset = imageAssets[file];
+  return asset[full ? 'full' : 'preview'];
+}
 const pending = '<span class="pending">待填写</span>';
 
 const cases = {
@@ -771,7 +904,7 @@ function escapeHTML(value) {
 function figure(file, caption, options = {}) {
   const [width,height] = imageSizes[file];
   const alt = options.alt || caption;
-  const source = options.preview ? 'img/t/' + file + '.webp' : 'img/' + file;
+  const source = assetURL(file);
   const variant = [height / width > 2.05 ? 'tall' : '', options.qr ? 'qr-image' : ''].filter(Boolean).join(' ');
   return '<figure class="fig ' + (options.className || '') + '"><button type="button" class="' + variant +
     '" aria-label="放大' + escapeHTML(alt) + '" data-photo="' + file + '"><img src="' + source + '" alt="' +
@@ -959,11 +1092,13 @@ const lightbox = $('lightbox');
 const lightScroll = $('light-scroll');
 const lightZoom = $('light-zoom');
 const motion = matchMedia('(prefers-reduced-motion: reduce)');
+const lightweight = matchMedia('(max-width: 650px), (pointer: coarse)');
+const instantPose = () => motion.matches || lightweight.matches;
 const ease = 'cubic-bezier(.16,1,.3,1)';
 const clamp = (value,min,max) => Math.max(min,Math.min(max,value));
 const mix = (from,to,amount) => from + (to - from) * amount;
 const radians = degrees => degrees * Math.PI / 180;
-const duration = ms => motion.matches ? 1 : ms;
+const duration = ms => motion.matches ? 1 : lightweight.matches ? Math.min(ms,130) : ms;
 const sleep = ms => new Promise(resolve => setTimeout(resolve,duration(ms)));
 const frame = () => new Promise(resolve => requestAnimationFrame(resolve));
 const corners = '<i class="corner tl"></i><i class="corner tr"></i><i class="corner br"></i><i class="corner bl"></i>';
@@ -974,7 +1109,7 @@ const sheets = sections.map((section,i) => {
   hinge.style.setProperty('--accent',palette[i]);
   hinge.style.setProperty('--tab-x', (3 + 71.5 * i) + 'px');
   const previews = '<div class="sheet-previews">' +
-    (section.previews || []).map(file => '<img src="img/t/' + file + '" alt="">').join('') +
+    (section.previews || []).map(file => '<img src="' + assetURL(file) + '" alt="" decoding="async">').join('') +
     section.notes.map(note => '<span>' + escapeHTML(note) + '</span>').join('') + '</div>';
   hinge.innerHTML = '<div class="sheet-rise"><div class="sheet-back"></div><button class="tab" type="button" data-section="' +
     i + '" aria-label="阅读' + section.name + '" aria-haspopup="dialog">' +
@@ -1018,7 +1153,7 @@ function easing(progress) {
   }
   return progress >= 1 ? 1 : curve((low + high) / 2,1,1);
 }
-function requestTick() { if (!raf) raf = requestAnimationFrame(renderPose); }
+function requestTick() { if (!raf && !document.hidden) raf = requestAnimationFrame(renderPose); }
 function renderPose(now) {
   raf = 0;
   const delta = clamp((now - lastTime) / 16.667,.4,3);
@@ -1026,13 +1161,13 @@ function renderPose(now) {
   const spreadProgress = clamp((now - spreadStart) / duration(950),0,1);
   spread = mix(spreadFrom,Number(open),easing(spreadProgress));
   if (resetting) {
-    const amount = motion.matches ? 1 : 1 - .92 ** delta;
+    const amount = instantPose() ? 1 : 1 - .92 ** delta;
     viewX = mix(viewX,initial.x,amount);
     viewY = mix(viewY,initial.y,amount);
     if (Math.abs(viewX - initial.x) + Math.abs(viewY - initial.y) < .07) {
       viewX = initial.x; viewY = initial.y; resetting = false;
     }
-  } else if (!drag && !motion.matches && phase === 'desk') {
+  } else if (!drag && !instantPose() && phase === 'desk') {
     viewX = clamp(viewX + velocityX * delta,-80,40);
     viewY += velocityY * delta;
     velocityX *= .94 ** delta;
@@ -1040,10 +1175,9 @@ function renderPose(now) {
     if (Math.abs(velocityX) < .012) velocityX = 0;
     if (Math.abs(velocityY) < .012) velocityY = 0;
   }
-  const still = !motion.matches && !drag && !resetting && !velocityX && !velocityY && phase === 'desk';
-  const drift = still ? Math.sin(now / 11000 * Math.PI * 2) * 1.2 : 0;
+  const drift = 0;
   const scaleTarget = phase === 'reading' || phase === 'turning' ? .97 : 1;
-  readerScale = mix(readerScale,scaleTarget,motion.matches ? 1 : 1 - .83 ** delta);
+  readerScale = mix(readerScale,scaleTarget,instantPose() ? 1 : 1 - .83 ** delta);
   stage.style.setProperty('--scene-scale', desktopScale * readerScale);
   folder.style.transform = 'rotateX(' + clamp(viewX - 8 * spread + drift * .6,-80,40) + 'deg) rotateY(' + (viewY + drift) + 'deg)';
   const pocketAngle = 58 * spread;
@@ -1072,7 +1206,7 @@ function renderPose(now) {
     const angle = mix(46,6,i / (sheets.length - 1)) * spread;
     const bend = hover < 0 || i === hover ? 0 : (i < hover ? 5 : -2) * spread;
     const y = pulled === i ? 320 : hover === i ? mix(18,70,spread) : 0;
-    const speed = motion.matches ? 1 : 1 - .82 ** delta;
+    const speed = instantPose() ? 1 : 1 - .82 ** delta;
     item.y = mix(item.y,y,speed);
     item.bend = mix(item.bend,bend,speed);
     if (Math.abs(item.y - y) < .1) item.y = y;
@@ -1083,7 +1217,7 @@ function renderPose(now) {
     item.rise.style.transform = 'translateY(' + -item.y + 'px)';
   });
   if (spreadProgress < 1 || flare < 1 || movingSheet || resetting ||
-      Math.abs(readerScale - scaleTarget) > .001 || (!motion.matches && phase === 'desk')) requestTick();
+      Math.abs(readerScale - scaleTarget) > .001 || (!instantPose() && (velocityX || velocityY))) requestTick();
 }
 function setOpen(value) {
   if (open === value) return;
@@ -1175,7 +1309,7 @@ window.addEventListener('pointermove',event => {
 function endDrag(event) {
   if (event.pointerId !== drag?.id) return;
   suppressClick = drag.moved;
-  if (performance.now() - drag.lastTime > 85 || event.type === 'pointercancel') {
+  if (instantPose() || performance.now() - drag.lastTime > 85 || event.type === 'pointercancel') {
     velocityX = 0; velocityY = 0;
   }
   drag = null;
@@ -1217,7 +1351,10 @@ for (const item of sheets) {
 }
 
 async function animate(element,keyframes,ms,options = {}) {
-  const animation = element.animate(keyframes,{duration:duration(ms),easing:ease,...options});
+  const frames = instantPose() && element === reader
+    ? [{opacity:1},{opacity:1}]
+    : keyframes;
+  const animation = element.animate(frames,{duration:duration(ms),easing:ease,...options});
   try { await animation.finished; } catch { /* A newer view cancelled the animation. */ }
 }
 function readerClip(source) {
@@ -1243,7 +1380,7 @@ function renderPage(index) {
   scroll.scrollTop = 0;
 }
 function revealContent() {
-  if (motion.matches || !('IntersectionObserver' in window)) return;
+  if (instantPose() || !('IntersectionObserver' in window)) return;
   const parts = [...content.children].flatMap(block =>
     block.matches('header,.about-grid,.case-study') ? [...block.children] : [block]);
   let delays = 0;
@@ -1292,6 +1429,7 @@ async function openPage(index,trigger) {
   const source = sheets[index].sheet.getBoundingClientRect();
   renderPage(index);
   readerDialog.showModal();
+  document.documentElement.classList.add('reading');
   $('put-back').focus({preventScroll:true});
   scroll.scrollTop = 0;
   phase = 'reading';
@@ -1319,6 +1457,7 @@ async function closePage() {
     animate($('reader-scrim'),[{opacity:Number(shade)},{opacity:0}],560,{fill:'forwards'})
   ]);
   readerDialog.close();
+  document.documentElement.classList.remove('reading');
   reader.getAnimations().forEach(animation => animation.cancel());
   $('reader-scrim').getAnimations().forEach(animation => animation.cancel());
   revealObserver?.disconnect();
@@ -1427,8 +1566,16 @@ async function openPhoto(trigger) {
   }
   const photo = new Image();
   photo.alt = original.alt;
-  photo.src = 'img/' + trigger.dataset.photo;
-  try { await photo.decode(); } catch { return; }
+  trigger.setAttribute('aria-busy','true');
+  photo.src = assetURL(trigger.dataset.photo,true);
+  try {
+    await photo.decode();
+  } catch {
+    photo.src = original.currentSrc || original.src;
+    try { await photo.decode(); } catch { return; }
+  } finally {
+    trigger.removeAttribute('aria-busy');
+  }
   if (phase !== 'reading' || lightbox.open || !trigger.isConnected) return;
   const box = original.getBoundingClientRect();
   const padding = innerWidth <= 650 ? 24 : 56;
@@ -1487,15 +1634,30 @@ lightbox.addEventListener('click',event => {
 });
 
 new ResizeObserver(fit).observe(stage);
-motion.addEventListener('change',() => { velocityX = 0; velocityY = 0; requestTick(); });
-fit();
-renderPose(performance.now());
-animate($('entry'),[{transform:'translateY(70px)'},{transform:'translateY(0)'}],1200);
-sheets.forEach(({rise},i) => {
-  // Animate front, back and label together without flattening their 3D layers.
-  rise.animate([{translate:'0 80px'},{translate:'0 0'}],
-    {duration:duration(900),delay:duration(65*i),easing:ease,fill:'backwards'});
+function updateMotion() {
+  velocityX = 0; velocityY = 0;
+  requestTick();
+}
+motion.addEventListener('change',updateMotion);
+lightweight.addEventListener('change',updateMotion);
+document.addEventListener('visibilitychange',() => {
+  if (document.hidden) {
+    cancelAnimationFrame(raf);
+    raf = 0;
+  } else {
+    lastTime = performance.now();
+    requestTick();
+  }
 });
+fit();
+requestTick();
+if (!instantPose()) {
+  animate($('entry'),[{transform:'translateY(70px)'},{transform:'translateY(0)'}],1200);
+  sheets.forEach(({rise},i) => {
+    rise.animate([{translate:'0 80px'},{translate:'0 0'}],
+      {duration:duration(900),delay:duration(65*i),easing:ease,fill:'backwards'});
+  });
+}
 </script>
 </body>
 </html>
