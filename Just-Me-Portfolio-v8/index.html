@@ -1,0 +1,1663 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#F5F6F8">
+<meta name="description" content="侯易君 Jasmine 的个人作品集。中山大学历史学本科生，关注 AI 产品、用户研究与数据运营。">
+<title>侯易君 Jasmine · Portfolio</title>
+<style>
+:root {
+  color-scheme: light;
+  --ink: #16181d;
+  --soft: #5b616e;
+  --quiet: #9aa0ac;
+  --ease: cubic-bezier(.16,1,.3,1);
+  --sans: 'PingFang SC', 'Microsoft YaHei', system-ui, sans-serif;
+  --display: 'Arial Black', 'Segoe UI', system-ui, sans-serif;
+  --mono: Consolas, 'SFMono-Regular', monospace;
+  --figures: 'Segoe UI', 'Helvetica Neue', var(--sans);
+}
+* { box-sizing: border-box; }
+html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; }
+body { color: var(--ink); font: 400 14px/1.65 var(--sans); background: #f5f6f8; }
+summary:focus-visible { outline: 2px solid #2348a0; outline-offset: 4px; }
+button, a { -webkit-tap-highlight-color: transparent; }
+button { font: inherit; color: inherit; cursor: pointer; }
+a { color: inherit; }
+button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 2px solid #2348a0; outline-offset: 4px; }
+button:disabled { cursor: default; }
+[hidden] { display: none !important; }
+h1,h2,h3,p,figure { margin: 0; }
+.desk {
+  position: fixed; inset: 0; display: grid; grid-template-rows: auto minmax(0,1fr) auto;
+  background: radial-gradient(ellipse at 48% 38%, #fff 1%, #ffffff5c 48%, transparent 73%), linear-gradient(160deg,#f5f6f8,#eceef2);
+}
+.topbar {
+  display: flex; justify-content: space-between; align-items: center; gap: 14px;
+  min-width: 0; padding: 24px clamp(22px,5vw,80px); border-bottom: 1px solid #171c2c0d;
+}
+.signature { display: flex; align-items: center; gap: 13px; min-width: 0; }
+.brand-icon {
+  width: 24px; height: 17px; border: 1.5px solid #282c35; border-radius: 3px; position: relative;
+  flex: none; background: #ffffff82;
+}
+.brand-icon::before {
+  content: ''; position: absolute; width: 10px; height: 4px; border: 1.5px solid #282c35; border-bottom: 0;
+  border-radius: 3px 3px 0 0; left: 1px; top: -5px; background: #ffcf3a;
+}
+.brand-icon::after { content: ''; position: absolute; inset: 6px 4px auto; height: 1px; background: #282c35; }
+.signature h1 { font-size: 16px; font-weight: 900; line-height: 1.1; white-space: nowrap; }
+.signature h1 span { font-family: var(--display); font-weight: 800; }
+.brand-tag { font: 500 10px var(--mono); letter-spacing: .08em; color: var(--soft); white-space: nowrap; }
+.tagline { color: var(--soft); font-size: 12px; letter-spacing: .09em; }
+.stage { position: relative; touch-action: none; cursor: grab; user-select: none; }
+.stage.dragging { cursor: grabbing; }
+.shadow {
+  position: absolute; top: calc(50% + var(--ground, 140px)); left: 50%; width: min(78vw, 750px); height: 100px;
+  transform: translate(-50%,-36%); pointer-events: none;
+  background: radial-gradient(ellipse closest-side,#333c5942 0%,#4a526a25 40%,#5e657712 65%,transparent 100%);
+}
+.scene { position: absolute; inset: 0; perspective: 1900px; pointer-events: none; transform-style: preserve-3d; }
+.mount,.entry,.folder {
+  position: absolute; width: 600px; height: 390px; transform-style: preserve-3d; transform-origin: 50% 100%;
+}
+.mount { left: 50%; top: 50%; transform: translate(-50%,calc(-100% + var(--ground, 140px))) scale(var(--scene-scale,1)); }
+.folder > * { transform-origin: 50% 100%; }
+.board,.cover {
+  position: absolute; inset: 0; border-radius: 22px 22px 15px 15px; backface-visibility: hidden;
+  border: 1px solid #fff;
+}
+.board { background: linear-gradient(152deg,#fff,#eef0f5); box-shadow: 0 7px 25px #2c3a5326; transform: translateZ(-45px); }
+.cover {
+  transform: translateZ(-46px) rotateY(180deg); display: grid; place-content: center; text-align: center;
+  gap: 13px; background: linear-gradient(145deg,#fdfdff,#edf0f6);
+  box-shadow: inset 0 0 0 7px #ffffff91, 0 10px 32px #2c3a5329;
+}
+.cover strong { font: 800 54px/.95 var(--display); letter-spacing: -.06em; }
+.cover p { font-size: 15px; color: var(--soft); }
+.spine {
+  position: absolute; left: 0; top: 391px; width: 600px; height: 1px; transform-origin: 50% 0;
+  border-radius: 0 0 15px 15px; background: #dce0ea; box-shadow: inset 0 0 0 1px #fff9;
+}
+.sheet-hinge {
+  position: absolute; bottom: 3px; left: 14px; width: 572px; height: 356px;
+  transform-style: preserve-3d;
+}
+.sheet-rise { position: absolute; inset: 0; transform-style: preserve-3d; }
+.sheet {
+  position: absolute; inset: 0; border-radius: 13px 13px 11px 11px; backface-visibility: hidden;
+  border: 1px solid #fff; pointer-events: auto; cursor: pointer;
+  background: linear-gradient(175deg,color-mix(in srgb,var(--accent) 24%, white),#fdfdfe 72%);
+  box-shadow: 0 2px 10px #313b5421;
+}
+.sheet::after { content: ''; position: absolute; inset: 6px; border: 1px solid #ffffff83; border-radius: 9px; pointer-events: none; }
+.sheet-back {
+  position: absolute; inset: 0; backface-visibility: hidden; transform: translateZ(-.6px) rotateY(180deg);
+  border: 1px solid #fff; border-radius: 13px; background: color-mix(in srgb,var(--accent) 12%, white);
+}
+.tab {
+  position: absolute; left: var(--tab-x); top: -30px; width: 64px; height: 31px;
+  display: grid; place-items: center; border: 1px solid #ffffffbf; border-bottom: 0;
+  backface-visibility: hidden; transform: translateZ(1.5px); pointer-events: auto;
+  border-radius: 8px 8px 0 0; padding: 0; background: var(--accent);
+  font-size: 13px; line-height: 1; font-weight: 900; color: #21242a;
+  box-shadow: inset 0 2px 0 #ffffff46, 0 -1px 5px #313b5410;
+}
+.corner { position: absolute; display: block; width: 0; height: 0; pointer-events: none; }
+.tl { left: 0; top: 0; } .tr { right: 0; top: 0; } .br { right: 0; bottom: 0; } .bl { left: 0; bottom: 0; }
+.tab { white-space: nowrap; }
+.sheet-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 14px 21px 8px; }
+.sheet-head strong { font: 800 25px/1 var(--display); letter-spacing: -.045em; }
+.sheet-head span { font: 500 10px var(--mono); color: var(--soft); letter-spacing: .04em; }
+.sheet-previews { display: flex; flex-wrap: wrap; gap: 7px; padding: 0 20px; align-items: flex-start; }
+.sheet-previews span { display: inline-flex; border-radius: 6px; padding: 5px 10px; background: #ffffffd9; font-size: 12px; font-weight: 700; white-space: nowrap; }
+.sheet-previews img { width: 168px; height: 94px; object-fit: cover; border: 1px solid #fff; border-radius: 6px; }
+.pleat {
+  position: absolute; top: 0; width: 532px; height: 390px; transform-origin: 0 100% !important;
+  background: repeating-conic-gradient(from 0deg at var(--fold,0px) 100%, #f7f9fdeb 0deg 3deg,#dfe4ee 3deg 5deg,#bbc5d7 5deg 6.5deg,#eaedf4 6.5deg 9deg);
+  pointer-events: none;
+}
+.pleat.left { left: 1px; } .pleat.right { left: 599px; }
+.pocket {
+  position: absolute; bottom: 0; left: 0; width: 600px; height: 286px; border: 0; padding: 0;
+  transform-style: preserve-3d; background: none; pointer-events: auto; border-radius: 0 0 17px 17px;
+}
+.pocket-glass,.pocket-back,.glint {
+  position: absolute; inset: 0; backface-visibility: hidden; pointer-events: none;
+  clip-path: path('M 0 13 Q 0 0 13 0 H 275 C 275 29 325 29 325 0 H 587 Q 600 0 600 13 V 269 Q 600 286 583 286 H 17 Q 0 286 0 269 Z');
+}
+.pocket-glass {
+  background: linear-gradient(120deg,#ffffff8f,#ffffffb8 48%,#e8ebf5ca),linear-gradient(0deg,#f6f7fbc4,transparent 80%);
+  backdrop-filter: blur(7px); border: 1px solid #fff; border-radius: 14px 14px 17px 17px;
+  box-shadow: inset 0 0 0 5px #ffffff64, inset 0 -14px 26px #7282a41b;
+}
+.pocket-back { background: linear-gradient(#fbfcfdec,#dfe5ef); transform: rotateY(180deg) translateZ(.8px); }
+.glint { overflow: hidden; }
+.glint::after {
+  content: ''; position: absolute; inset: -60% auto -55% -36%; width: 28%; transform: translateX(var(--shine,0px)) rotate(30deg);
+  background: linear-gradient(90deg,transparent,#ffffff96,transparent);
+}
+.pocket-face { position: absolute; inset: 0; backface-visibility: hidden; transform: translateZ(2px); pointer-events: none; }
+.glint { transform: translateZ(1px); }
+.snap {
+  position: absolute; top: 33px; left: calc(50% - 18px); width: 36px; height: 36px; border-radius: 50%;
+  background: radial-gradient(circle at 34% 27%, #fff 10%, #f9faff 30%,#d6dbea 67%,#9ca9c0 100%);
+  border: 1px solid #fff; box-shadow: 0 3px 8px #33416558, inset 0 0 0 2px #ffffff74; z-index: 1;
+}
+.cord {
+  position: absolute; left: calc(50% - 1px); top: 51px; width: 3px; height: 39px; border-radius: 3px;
+  background: #a5aebf; box-shadow: 1px 0 1px #fff; transform-origin: top; transform: rotate(-7deg);
+  transition: opacity .55s var(--ease);
+}
+.folder[data-open="true"] .cord { opacity: 0; }
+.nameplate {
+  opacity: var(--plate-visibility,1);
+  position: absolute; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 6px;
+  left: 63px; right: 63px; top: 85px; bottom: 31px; border: 1px solid #ffffffdf; border-radius: 9px;
+  background: linear-gradient(158deg,#fcfdffc9,#f5f7fbc2); box-shadow: 0 2px 10px #323c5413, inset 0 0 0 4px #ffffff52;
+}
+.nameplate strong { font: 800 65px/.9 var(--display); letter-spacing: -.075em; }
+.nameplate .type { font: 700 22px/1 var(--display); letter-spacing: .20em; padding-left: .2em; }
+.nameplate small { color: var(--soft); font: 500 9px var(--mono); letter-spacing: .055em; margin-top: 9px; }
+.controls { display: grid; justify-items: center; gap: 13px; padding: 8px 18px max(24px, env(safe-area-inset-bottom)); z-index: 1; }
+.hint-row { display: flex; align-items: center; justify-content: center; gap: 12px; color: var(--soft); font-size: 12px; }
+.reset,.quick button,.reader-controls button,.page-nav button,.copy {
+  border: 1px solid #1c284017; background: #ffffff9c; border-radius: 999px;
+  transition: transform .35s var(--ease), background-color .25s, box-shadow .25s;
+}
+.key-hint { font: 400 10px var(--mono),var(--sans); color: var(--soft); }
+.sound[aria-pressed="true"] { background: #fff4ca; }
+button:active:not(.pocket,.tab),.contact-action:active { scale: .97; }
+.reset { padding: 4px 11px; white-space: nowrap; font-size: 12px; }
+.quick { display: flex; flex-wrap: wrap; justify-content: center; gap: 7px; }
+.quick button { display: inline-flex; align-items: center; gap: 7px; padding: 8px 12px; font-size: 12px; font-weight: 700; min-height: 36px; }
+.quick button span { width: 9px; height: 9px; border-radius: 2px; background: var(--accent); box-shadow: inset 0 0 0 1px #00000014; }
+.quick button:hover,.quick button[data-hover="true"],.reset:hover,.reader-controls button:hover,.page-nav button:hover,.copy:hover {
+  background: #fff; transform: translateY(-2px); box-shadow: 0 3px 8px #27364f13;
+}
+.reader-dialog,.lightbox { position: fixed; inset: 0; margin: 0; width: 100%; height: 100%; max-width: none; max-height: none; padding: 0; border: 0; background: transparent; color: inherit; overflow: hidden; }
+.reader-dialog::backdrop,.lightbox::backdrop { background: transparent; }
+.reader-scrim,.light-scrim { position: absolute; inset: 0; }
+.reader-scrim { background: #eff1f5; }
+.reader {
+  --accent: #ffcf3a; position: absolute; inset: clamp(12px,4vh,44px) auto; left: 50%; translate: -50% 0; width: min(1120px,calc(100% - 44px)); overflow: clip;
+  display: grid; grid-template-rows: auto minmax(0,1fr); border: 1px solid white; border-radius: 6px 22px 22px 22px;
+  background: linear-gradient(150deg,color-mix(in srgb,var(--accent) 16%,white),#fff 71%);
+  backdrop-filter: blur(24px); box-shadow: 0 22px 80px #29334c28;
+}
+.reader-top {
+  position: relative; z-index: 1; display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 12px 17px 12px 0;
+  border-bottom: 1px solid #222a3d13;
+}
+.reader-tab { background: var(--accent); padding: 9px 16px; border-radius: 0 7px 7px 0; font: 700 12px var(--sans); }
+.reader-tab span { font: 500 11px var(--mono); margin-right: 8px; }
+.reader-controls { display: flex; gap: 6px; }
+.reader-controls button,.page-nav button,.copy { padding: 7px 13px; font-size: 12px; font-weight: 700; white-space: nowrap; }
+.reader-scroll { overflow: auto; overscroll-behavior: contain; padding: 0 clamp(21px,6vw,78px); border-radius: 0 0 22px 22px; scrollbar-gutter: stable; overflow-anchor: none; }
+.content { padding: clamp(27px,6vw,65px) 0 32px; }
+.kicker { color: var(--soft); font: 500 11px/1.6 var(--mono); letter-spacing: .09em; text-transform: uppercase; }
+.content h2 { margin: 8px 0 12px; font: 900 clamp(32px,6vw,70px)/1.1 var(--sans); letter-spacing: -.065em; overflow-wrap: anywhere; }
+.english { font-family: var(--display); font-weight: 800; }
+.content h3 { font-size: clamp(19px,3vw,28px); line-height: 1.35; margin-bottom: 9px; letter-spacing: -.035em; }
+.content p + p { margin-top: 12px; }
+.content .kicker + h3 { margin-top: 7px; }
+.lede { max-width: 56ch; font-weight: 700; font-size: clamp(15px,2vw,20px); }
+.project-lede { max-width: none; font-size: clamp(13px,3.7vw,20px); text-wrap: pretty; }
+.secondary,.copy-status { color: var(--soft); }
+.pending { color: var(--soft); font-size: .92em; text-decoration: underline dotted #8c93a0; text-underline-offset: 4px; }
+.block { margin-top: clamp(27px,5vw,54px); }
+.about-grid,.image-grid,.contact-bottom { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: clamp(14px,3vw,36px); }
+.about-grid { grid-template-columns: minmax(0,1.18fr) minmax(0,.82fr); align-items: start; }
+.pills { display: flex; flex-wrap: wrap; list-style: none; gap: 6px; padding: 0; margin: 17px 0 0; }
+.pills li { font-size: 12px; padding: 4px 9px; border-radius: 50px; border: 1px solid #1c284020; background: #fff9; }
+.fig { min-width: 0; }
+.fig button { display: block; position: relative; padding: 0; width: 100%; border: 1px solid #ffffff; border-radius: 14px; overflow: hidden; background: #f0f1f5; cursor: zoom-in; }
+.fig img { display: block; width: 100%; height: auto; max-height: 560px; object-fit: contain; }
+.fig .tall img { object-fit: cover; object-position: top; }
+.fig .tall::after { content: '点击查看全图'; position: absolute; inset: auto 0 0; padding: 25px 12px 12px; color: var(--ink); background: linear-gradient(transparent,#fffffff2); font-size: 12px; }
+.fig figcaption { padding: 7px 1px 0; color: var(--soft); font-size: 12px; }
+.about-grid .fig img { max-height: 445px; object-fit: cover; object-position: center 33%; }
+.contact-card,.metric {
+  padding: 16px 18px; background: #ffffff9e; border: 1px solid #26335015; border-radius: 12px;
+}
+ .contact-cards { display: grid; gap: 10px; }
+.metrics { display: grid; grid-template-columns: repeat(var(--cards,3),minmax(0,1fr)); gap: 10px; }
+.project-part .metrics { margin-top: 16px; }
+.metric {
+  min-width: 0; container-type: inline-size; display: grid; align-content: start; gap: 7px;
+  padding: clamp(10px,2vw,17px); border-top: 2px solid color-mix(in srgb,var(--accent) 48%,#374451);
+  background: color-mix(in srgb,var(--accent) 5%,white);
+}
+.metric small { color: var(--soft); font-size: 12px; line-height: 1.55; text-wrap: pretty; }
+.metric strong {
+  display: block; font: 800 clamp(16px,17cqi,34px)/1.04 var(--figures);
+  letter-spacing: -.035em; font-variant-numeric: tabular-nums; white-space: nowrap;
+}
+.bio p:first-child { font-weight: 700; }
+.bio { max-width: 56ch; }
+.flavors { display: flex; flex-wrap: wrap; gap: 8px; padding: 0; margin: 14px 0 0; list-style: none; }
+.flavors li { flex: 1 1 105px; padding: 8px 12px; border: 1px solid #26335015; border-radius: 9px; background: #fff9; }
+.flavors span { display: block; font-size: 12px; color: var(--soft); }
+.timeline { list-style: none; margin: 0; padding: 0 0 0 16px; border-left: 1px solid #242c4033; }
+.timeline li { position: relative; padding: 0 0 23px 5px; }
+.timeline li:last-child { padding-bottom: 0; }
+.timeline li::before { content: ''; position: absolute; left: -21px; top: 5px; width: 8px; height: 8px; background: var(--accent); border: 1px solid #272f4355; border-radius: 50%; }
+.timeline h3 { font-size: 19px; margin: 4px 0; }
+.capability-head { padding: 0 0 22px; border-bottom: 1px solid #26335020; }
+.case-jumps { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+.case-jumps a,.contact-action {
+  display: inline-block; width: fit-content; text-decoration: none; font-size: 12px; font-weight: 700;
+  border-radius: 999px; padding: 7px 12px; background: color-mix(in srgb,var(--accent) 35%,white);
+}
+.case-jumps a:hover,.contact-action:hover { background: var(--accent); }
+.case-study { padding-top: clamp(26px,5vw,52px); }
+.case-study + .case-study { border-top: 1px solid #26335020; margin-top: clamp(34px,7vw,68px); }
+.case-study h3 { font-size: clamp(25px,4.8vw,49px); letter-spacing: -.055em; scroll-margin-top: 18px; }
+.case-study h4 { margin: 6px 0; font-size: clamp(17px,3vw,23px); line-height: 1.3; }
+.project-role { color: var(--soft); font-weight: 700; }
+.project-head:has(.project-hero) {
+  display: grid; grid-template-columns: minmax(0,1.15fr) minmax(0,.85fr); gap: clamp(16px,4vw,42px); align-items: start;
+}
+.project-hero { width: min(100%,400px); }
+.project-hero .fig img,.evidence-grid .fig img {
+  width: 100%; height: auto; max-height: 212px; object-fit: contain;
+}
+.evidence-grid .fig button { background: #f6f7f9; }
+.evidence-grid .fig img { aspect-ratio: 2 / 1; max-height: 200px; }
+.project-hero .poster { width: min(100%,275px); }
+.project-part { margin-top: clamp(23px,4vw,40px); }
+.evidence-grid { margin-top: 15px; align-items: start; }
+.evidence-grid:has(.fig:only-child) { grid-template-columns: minmax(0,400px); }
+.source-code { margin-top: 17px; border: 1px solid #26335020; border-radius: 11px; background: #fff9; }
+.source-code summary { padding: 10px 14px; font-weight: 700; cursor: pointer; }
+.source-code pre { margin: 0; max-height: min(480px,65vh); overflow: auto; padding: 11px 14px 14px; background: #202637; color: #edf1ff; border-radius: 0 0 10px 10px; }
+.code-line { display: block; min-width: max-content; font: 400 12px/1.8 var(--mono),var(--sans); }
+.code-line > span { display: inline-block; width: 5ch; color: #9ea7bc; }
+.contact-card { min-width: 0; display: flex; flex-direction: column; gap: 4px; overflow-wrap: anywhere; }
+.contact-card h3 { font-size: 17px; }
+.contact-card p { color: var(--soft); font: 500 12px/1.6 var(--mono); margin: 0 0 7px; }
+.contact-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: auto; }
+.contact-layout { display: grid; grid-template-columns: minmax(0,1.15fr) minmax(0,.85fr); align-items: start; gap: clamp(12px,3vw,26px); }
+.contact-cards { grid-template-columns: minmax(0,1fr); }
+.wechat-card { display: grid; grid-template-columns: minmax(0,1fr) clamp(94px,26vw,150px); align-items: center; gap: 8px; }
+.wechat-card small { color: var(--soft); font-size: 11px; }
+.wechat-card .contact-actions { margin-top: 8px; }
+.qr-image img { object-fit: contain; background: white; }
+.location-card { display: grid; gap: 13px; padding: 12px; background: #ffffff9e; border: 1px solid #26335015; border-radius: 12px; }
+.location-card > div { padding: 0 4px 5px; }
+.contact-portrait img { aspect-ratio: 1; object-position: center 33%; object-fit: cover; }
+.copy-status { min-height: 1.65em; font-size: 12px; }
+.review-block { border-top: 1px solid #26335020; padding-top: 24px; }
+.review-block h4 { scroll-margin-top: 18px; }
+.report-link { margin-top: 14px; }
+.report-figure { width: min(100%,510px); margin-top: 14px; }
+.report-figure .fig img { max-height: 340px; object-fit: contain; }
+.report-details { margin-top: 13px; padding: 10px 12px; border-radius: 9px; background: #f0f5ee; }
+.report-details summary { cursor: pointer; font-weight: 700; }
+.report-details p { margin-top: 9px; }
+#ops-reference-intro { scroll-margin-top: 16px; }
+.ops-gallery { display: grid; gap: clamp(12px,2.4vw,26px); margin-top: 16px; }
+.ops-gallery .fig button { background: #f6f7f9; }
+.ops-gallery .fig img { object-fit: contain; }
+.ops-gallery .tall::after { content: none; }
+.ops-gallery .deck .fig img { max-height: 390px; }
+.ops-gallery-row { display: grid; gap: clamp(7px,1.6vw,16px); }
+.ops-gallery .posters { grid-template-columns: repeat(2,minmax(0,1fr)); }
+.ops-gallery .posters .fig img { max-height: 350px; aspect-ratio: 5 / 6; }
+.ops-gallery .articles { grid-template-columns: repeat(4,minmax(0,1fr)); }
+.ops-gallery .articles .fig img { max-height: 300px; aspect-ratio: 3 / 5; }
+.project-hero .product-poster { width: min(100%,186px); }
+.project-hero .product-poster img { max-height: 263px; }
+@media (max-width:650px) {
+  .ops-gallery .articles { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .ops-gallery .articles .fig img { max-height: 230px; }
+  .project-hero .product-poster { width: min(100%,150px); }
+  .project-hero .product-poster img { max-height: 212px; }
+}
+.page-nav { border-top: 1px solid #26335019; margin-top: 42px; padding-top: 16px; display: flex; justify-content: space-between; gap: 8px; }
+.page-nav button { white-space: normal; text-align: left; }
+.light-scrim { background: #fffffff0; }
+.light-scroll { position: absolute; inset: 0; display: flex; flex-direction: column; padding: 28px; overflow: auto; overscroll-behavior: contain; cursor: zoom-out; }
+.light-scroll img { display: block; flex: none; max-width: 100%; margin: auto; border-radius: 8px; box-shadow: 0 10px 42px #242b4021; }
+.light-zoom {
+  position: absolute; top: 14px; right: 60px; padding: 6px 12px; min-height: 38px;
+  background: #fff; border: 1px solid #242c4024; border-radius: 50px; font-size: 12px; font-weight: 700;
+}
+.light-scroll[data-zoomed] { cursor: auto; display: block; padding-top: 60px; }
+.light-scroll[data-zoomed] img { max-width: none; margin: 0 auto; }
+.light-close { position: absolute; right: 14px; top: 14px; width: 38px; height: 38px; background: #fff; border: 1px solid #242c4024; border-radius: 50%; font-size: 22px; line-height: 1; }
+@media (max-width: 650px) {
+  .tagline { display: none; }
+  .topbar { padding: 20px 17px; }
+  .signature { gap: 9px; }
+  .brand-tag { font-size: 9px; }
+  .controls { padding-inline: 10px; gap: 9px; }
+  .hint-row { font-size: 10px; gap: 6px; }
+  .quick { gap: 5px; max-width: 470px; }
+  .quick button { font-size: 11px; padding: 6px 9px; min-height: 34px; }
+  .reader { width: calc(100% - 12px); top: max(6px,env(safe-area-inset-top)); bottom: max(6px,env(safe-area-inset-bottom)); }
+  .reader-top { padding-right: 7px; gap: 5px; }
+  .reader-tab { padding: 8px 9px; }
+  .reader-controls { gap: 4px; }
+  .reader-controls button { padding: 6px 9px; min-height: 36px; }
+  .reader-controls .wide { display: none; }
+  .about-grid,.image-grid,.contact-layout { grid-template-columns: minmax(0,1fr); }
+  .key-hint { display: none; }
+  .metrics { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .project-head:has(.project-hero) { grid-template-columns: minmax(0,1fr); gap: 13px; }
+  .project-hero { width: min(100%,350px); }
+  .project-hero .fig img { max-height: 148px; }
+  .evidence-grid { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 9px; }
+  .evidence-grid .fig img { max-height: 135px; }
+  .report-figure .fig img { max-height: 235px; }
+  .contact-portrait { justify-self: start; }
+  .light-scroll { padding: 12px; }
+}
+@media (max-width: 335px) {
+  .brand-tag { letter-spacing: 0; }
+  .hint-row { flex-wrap: wrap; }
+  .reader-scroll { padding-inline: 16px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+}
+.reading .stage { visibility: hidden; }
+.fig button[aria-busy="true"] { cursor: progress; }
+@media (max-width:650px), (pointer:coarse) {
+  .reader,.pocket-glass { backdrop-filter: none; -webkit-backdrop-filter: none; }
+  .reader { clip-path: none !important; box-shadow: 0 7px 22px #29334c18; }
+  .pleat { display: none; }
+  .sheet,.board { box-shadow: none; }
+  .reader-scroll { -webkit-overflow-scrolling: touch; }
+}
+</style>
+</head>
+<body>
+<div class="desk" id="desk">
+  <header class="topbar">
+    <div class="signature">
+      <span class="brand-icon" aria-hidden="true"></span>
+      <h1>侯易君 <span lang="en">Jasmine</span></h1>
+      <span class="brand-tag" lang="en">JUST ME · PORTFOLIO</span>
+    </div>
+    <p class="tagline">用户研究 · AI 产品 · 数据运营</p>
+  </header>
+  <main class="stage" id="stage" aria-label="3D 作品集文件袋">
+    <div class="shadow" aria-hidden="true"></div>
+    <div class="scene">
+      <div class="mount">
+        <div class="entry" id="entry">
+          <div class="folder" id="folder" data-open="false">
+            <div class="board" aria-hidden="true"></div>
+            <div class="cover" lang="en">
+              <span class="brand-tag">JUST ME · PORTFOLIO</span>
+              <strong>JUST ME · Portfolio</strong>
+              <p>Turn me around and open the folder</p>
+            </div>
+            <div class="spine" id="spine" aria-hidden="true"></div>
+            <div class="pleat left" aria-hidden="true"></div>
+            <div class="pleat right" aria-hidden="true"></div>
+            <button class="pocket" id="pocket" type="button" aria-label="打开文件袋" aria-expanded="false">
+              <span class="pocket-back"></span><span class="pocket-glass"></span><span class="glint"></span>
+              <span class="pocket-face">
+                <span class="cord"></span><span class="snap"></span>
+                <span class="nameplate" lang="en"><strong>JUST ME</strong><span class="type">PORTFOLIO</span><small>PRODUCT DESIGNER · CONTENT CREATOR · AI INTERACTION EXPLORER</small></span>
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <noscript>启用 JavaScript 后可打开和旋转文件袋。</noscript>
+  </main>
+  <footer class="controls">
+    <div class="hint-row"><p id="hint">拖动可自由旋转 · 点按扣或向下滚动打开</p><button class="reset" id="reset" type="button">↺ 回正</button><button class="reset sound" id="sound" type="button" aria-pressed="false">音效关</button><span class="key-hint">按 1–8 打开分区</span></div>
+    <nav class="quick" id="quick" aria-label="作品集分区"></nav>
+  </footer>
+</div>
+
+<dialog class="reader-dialog" id="reader-dialog" aria-labelledby="reader-tab">
+  <div class="reader-scrim" id="reader-scrim"></div>
+  <section class="reader" id="reader">
+    <header class="reader-top">
+      <div class="reader-tab" id="reader-tab" aria-live="polite"></div>
+      <div class="reader-controls">
+        <button type="button" data-turn="-1" aria-label="上一页">←<span class="wide"> 上一页</span></button>
+        <button type="button" data-turn="1" aria-label="下一页"><span class="wide">下一页 </span>→</button>
+        <button type="button" id="put-back" aria-label="放回（Esc）">放回<span class="wide"> Esc</span></button>
+      </div>
+    </header>
+    <div class="reader-scroll" id="reader-scroll" tabindex="0" aria-label="阅读正文">
+      <article class="content" id="content"></article>
+    </div>
+  </section>
+</dialog>
+
+<dialog class="lightbox" id="lightbox" aria-label="查看大图">
+  <div class="light-scrim" id="light-scrim"></div>
+  <div class="light-scroll" id="light-scroll" tabindex="0" aria-label="大图，可滚动查看"></div>
+  <button type="button" class="light-zoom" id="light-zoom" aria-pressed="false">放大阅读</button>
+  <button type="button" class="light-close" id="light-close" aria-label="关闭大图">×</button>
+</dialog>
+
+<script>
+'use strict';
+const imageSizes = {
+  "p2-01.jpg": [
+    1920,
+    1080
+  ],
+  "me-illu.jpg": [
+    2400,
+    3600
+  ],
+  "me-photo.jpg": [
+    2400,
+    3600
+  ],
+  "p4-01.png": [
+    778,
+    435
+  ],
+  "p4-02.png": [
+    1013,
+    565
+  ],
+  "p4-03.jpg": [
+    2400,
+    1350
+  ],
+  "p3-01.jpg": [
+    2400,
+    1350
+  ],
+  "p3-03.jpg": [
+    2400,
+    1350
+  ],
+  "p11-01.jpg": [
+    1985,
+    2599
+  ],
+  "p11-02.jpg": [
+    2307,
+    1261
+  ],
+  "contact-wechat.png": [
+    700,
+    725
+  ],
+  "p2-script.png": [
+    2300,
+    1466
+  ],
+  "game-survey.jpg": [
+    1088,
+    481
+  ],
+  "danmei-survey.jpg": [
+    938,
+    663
+  ],
+  "danmei-competition.jpg": [
+    1124,
+    796
+  ],
+  "loreal-concept.jpg": [
+    1224,
+    679
+  ],
+  "forest-strategy.jpg": [
+    1438,
+    770
+  ],
+  "star-competitor-excerpt.png": [
+    2134,
+    1023
+  ],
+  "star-metrics-excerpt.png": [
+    2134,
+    1192
+  ],
+  "ops-editorial.png": [
+    558,
+    1286
+  ],
+  "star-report-template.png": [
+    1680,
+    1120
+  ],
+  "ops-ppt-danmei.png": [
+    2172,
+    953
+  ],
+  "ops-poster-plastic.png": [
+    696,
+    937
+  ],
+  "ops-poster-numbed.png": [
+    649,
+    915
+  ],
+  "ops-editorial-cinema.png": [
+    263,
+    651
+  ],
+  "ops-editorial-dunhuang.png": [
+    261,
+    651
+  ],
+  "ops-editorial-purple.png": [
+    411,
+    1026
+  ],
+  "light-poster.png": [
+    582,
+    822
+  ]
+};
+const imageAssets = {
+  "contact-wechat.png": {
+    "preview": "contact-wechat-preview.webp",
+    "full": "contact-wechat-full.webp"
+  },
+  "danmei-competition.jpg": {
+    "preview": "danmei-competition-preview.webp",
+    "full": "danmei-competition-full.webp"
+  },
+  "danmei-survey.jpg": {
+    "preview": "danmei-survey-preview.webp",
+    "full": "danmei-survey-full.webp"
+  },
+  "forest-strategy.jpg": {
+    "preview": "forest-strategy-preview.webp",
+    "full": "forest-strategy-full.webp"
+  },
+  "game-survey.jpg": {
+    "preview": "game-survey-preview.webp",
+    "full": "game-survey-full.webp"
+  },
+  "light-poster.png": {
+    "preview": "light-poster-preview.webp",
+    "full": "light-poster-full.webp"
+  },
+  "loreal-concept.jpg": {
+    "preview": "loreal-concept-preview.webp",
+    "full": "loreal-concept-full.webp"
+  },
+  "me-illu.jpg": {
+    "preview": "me-illu-preview.webp",
+    "full": "me-illu-full.webp"
+  },
+  "me-photo.jpg": {
+    "preview": "me-photo-preview.webp",
+    "full": "me-photo-full.webp"
+  },
+  "ops-editorial-cinema.png": {
+    "preview": "ops-editorial-cinema-preview.webp",
+    "full": "ops-editorial-cinema-full.webp"
+  },
+  "ops-editorial-dunhuang.png": {
+    "preview": "ops-editorial-dunhuang-preview.webp",
+    "full": "ops-editorial-dunhuang-full.webp"
+  },
+  "ops-editorial-purple.png": {
+    "preview": "ops-editorial-purple-preview.webp",
+    "full": "ops-editorial-purple-full.webp"
+  },
+  "ops-editorial.png": {
+    "preview": "ops-editorial-preview.webp",
+    "full": "ops-editorial-full.webp"
+  },
+  "ops-poster-numbed.png": {
+    "preview": "ops-poster-numbed-preview.webp",
+    "full": "ops-poster-numbed-full.webp"
+  },
+  "ops-poster-plastic.png": {
+    "preview": "ops-poster-plastic-preview.webp",
+    "full": "ops-poster-plastic-full.webp"
+  },
+  "ops-ppt-danmei.png": {
+    "preview": "ops-ppt-danmei-preview.webp",
+    "full": "ops-ppt-danmei-full.webp"
+  },
+  "p11-01.jpg": {
+    "preview": "p11-01-preview.webp",
+    "full": "p11-01-full.webp"
+  },
+  "p11-02.jpg": {
+    "preview": "p11-02-preview.webp",
+    "full": "p11-02-full.webp"
+  },
+  "p2-01.jpg": {
+    "preview": "p2-01-preview.webp",
+    "full": "p2-01-full.webp"
+  },
+  "p2-04.jpg": {
+    "preview": "p2-04-preview.webp",
+    "full": "p2-04-full.webp"
+  },
+  "p2-script.png": {
+    "preview": "p2-script-preview.webp",
+    "full": "p2-script-full.webp"
+  },
+  "p3-01.jpg": {
+    "preview": "p3-01-preview.webp",
+    "full": "p3-01-full.webp"
+  },
+  "p3-03.jpg": {
+    "preview": "p3-03-preview.webp",
+    "full": "p3-03-full.webp"
+  },
+  "p4-01.png": {
+    "preview": "p4-01-preview.webp",
+    "full": "p4-01-full.webp"
+  },
+  "p4-02.png": {
+    "preview": "p4-02-preview.webp",
+    "full": "p4-02-full.webp"
+  },
+  "p4-03.jpg": {
+    "preview": "p4-03-preview.webp",
+    "full": "p4-03-full.webp"
+  },
+  "p4-04.jpg": {
+    "preview": "p4-04-preview.webp",
+    "full": "p4-04-full.webp"
+  },
+  "star-competitor-excerpt.png": {
+    "preview": "star-competitor-excerpt-preview.webp",
+    "full": "star-competitor-excerpt-full.webp"
+  },
+  "star-metrics-excerpt.png": {
+    "preview": "star-metrics-excerpt-preview.webp",
+    "full": "star-metrics-excerpt-full.webp"
+  },
+  "star-report-template.png": {
+    "preview": "star-report-template-preview.webp",
+    "full": "star-report-template-full.webp"
+  }
+};
+function assetURL(file, full = false) {
+  const asset = imageAssets[file];
+  return asset[full ? 'full' : 'preview'];
+}
+const pending = '<span class="pending">待填写</span>';
+
+const cases = {
+  game: {
+    title: '禁赌风云', year: '2024—2025（原型阶段）', role: '项目负责人 · 5 人团队',
+    type: '省级大学生创新创业训练计划 · 交互叙事',
+    summary: '把民国广东禁赌史写成可玩的分支剧情，再用试玩反馈调整选择与后果。',
+    tags: ['史料转译','Ren’Py 原型','试玩迭代'],
+    hero: ['p2-01.jpg','游戏主菜单'],
+    context: ['同一段禁赌史，站在谁的立场看？','我带领 5 人团队把广东禁赌史的研究材料转成赌场老板、工人赌徒和禁赌警察三条路线。玩家分别面对经营利益、家庭生计、执法责任，再从各自处境理解同一场禁赌冲突。'],
+    approach: ['试玩迭代 · 让工人线的后果跟着选择走','《游戏的法治教育与法律科普作用调研报告》记录了一个具体问题：玩家只选工厂打工，仍然触发「赌博导致家徒四壁」的结局。这类反馈让我们把修改落到分支判定和即时反馈上。','交付版脚本中，工厂上班会获得工钱、改善家庭状态并降低赌桌诱惑，变化会即时提示。月底再根据累积的债务、家用和诱惑触发对应剧情，同样选择打工的玩家也能看出自己怎样走到眼前的局面。'],
+    evidence: [['p2-script.png','三条角色路线']],
+    code: [
+      [4472, "label gambler_month_pressure:"],
+      [4473, "    if debt >= 300:"],
+      [4474, "        narrator \"月底刚过，钱老板的人便在巷口露了面。他们没有进门，只靠在墙边抽烟，可梁秀云已经明白那是什么意思。\""],
+      [4475, "        $ family -= 4"],
+      [4476, "        $ clarity -= 2"],
+      [4477, "        $ renpy.notify(\"债务压力过高：家庭 -4 / 清醒 -2\")"],
+      [4478, "    elif money2 < 180:"],
+      [4479, "        narrator \"这个月的米缸见了底，梁秀云把粥熬得很稀，孩子们没有抱怨，只是吃得比平时更慢。\""],
+      [4480, "        $ family -= 2"],
+      [4481, "        $ temptation += 1"],
+      [4482, "        $ renpy.notify(\"家用紧张：家庭 -2 / 诱惑 +1\")"],
+      [4483, ""],
+      [4484, "    if temptation >= 8:"],
+      [4485, "        narrator \"夜深后，你又听见骰子落碗的幻声。明明屋里很安静，你却翻来覆去，像有人在耳边催你再去一次。\""],
+      [4486, "        $ clarity -= 3"],
+      [4487, "        $ family -= 1"],
+      [4488, "        $ renpy.notify(\"诱惑过高：清醒 -3 / 家庭 -1\")"],
+      [4489, "    elif clarity >= 85 and family >= 85:"],
+      [4490, "        narrator \"这一晚，梁秀云替你补好袖口。针脚很密，灯光很暗，你忽然觉得这样的日子虽然苦，却还没有散。\""],
+      [4491, "        $ temptation = max(0, temptation - 1)"],
+      [4492, "        $ renpy.notify(\"家庭支撑：诱惑 -1\")"],
+      [4493, "    return"],
+      [4494, ""],
+      [4495, ""],
+      [4496, ""],
+      [4497, "label month_loop:"],
+      [4498, "    if current_month in (3,4,5):"],
+      [4499, "        scene bg_2_fushouli_1"],
+      [4500, "    elif current_month in (6,7,8):"],
+      [4501, "        scene bg_2_fushouli_2"],
+      [4502, "    else:"],
+      [4503, "        scene bg_2_fushouli_3"],
+      [4504, "    $ gambler_gambling=[\"gambler_win\",\"gambler_lose\",\"gambler_neither\"]"],
+      [4505, "    show screen time_display"],
+      [4506, "    lqm \"现在该去做什么呢？……\"with dissolve"],
+      [4507, "    show bg_2_white:"],
+      [4508, "        alpha 0.2"],
+      [4509, "    menu r1:"],
+      [4510, "        \"你选择前往——\""],
+      [4511, "        \"工厂上班\":"],
+      [4512, "            scene bg_2_zhonghua_road_factory"],
+      [4513, "            narrator \"\"\""],
+      [4514, "            你照常来到工厂上班，拼死拼活，汗如雨下。"],
+      [4515, ""],
+      [4516, "            与此同时，你不由想起那天赌桌前的畅快感觉……"],
+      [4517, ""],
+      [4518, "            【赚到12元】"],
+      [4519, "            \"\"\""],
+      [4520, "            $ money2+=12"],
+      [4521, "            $ family+=3"],
+      [4522, "            $ fame+=2"],
+      [4523, "            $ clarity += 1"],
+      [4524, "            $ temptation = max(0, temptation - 1)"],
+      [4525, "            $ renpy.notify(\"金钱 +12 / 家庭 +3 / 清醒 +1 / 诱惑 -1\")"],
+      [4526, ""],
+      [4527, "        \"码头找活\":"],
+      [4528, "            scene bg_2_dock"],
+      [4529, "            narrator \"\"\""],
+      [4530, "            你来到沙面码头，这里交织着海水的咸湿味道和码头工人的汗臭味。"],
+      [4531, ""],
+      [4532, "            你在码头找了一份临时散工，吭哧吭哧地干活，汗如雨下。"],
+      [4533, ""],
+      [4534, "            【赚到8元】"],
+      [4535, "            \"\"\""],
+      [4536, "            $ choice-=1"],
+      [4537, "            $ money2+=8"],
+      [4538, "            $ family+=1"],
+      [4539, "            $ fame+=1"],
+      [4540, "            $ clarity += 1"],
+      [4541, "            $ renpy.notify(\"金钱 +8 / 家庭 +1 / 清醒 +1\")"]
+    ],
+    outcome: ['交付可玩原型，获得省级大创优秀项目','成品有三条角色路线和 40 多个剧情分支，并配套形成历史研究与法治教育专题调研报告。'],
+    gameResearch: true
+  },
+  star: {
+    title: 'AI 星伴', year: '2026.08—11', role: 'AI 产品运营 · 运营商事业部',
+    type: '科大讯飞 · AI 陪伴产品',
+    summary: '跟进客户诉求到 H5 权益上线，用竞品研究和运营数据支持产品决策。',
+    tags: ['需求跟进','上线验收','竞品分析','渠道与留存复盘'],
+    context: ['把客户反馈拆成能验收的需求','我负责运营商客户的日常对接，梳理订购后的权益问题，提交产品需求并跟进处理。我把流程拆成订单确认、H5 权益同步和功能兑换，分别核对同步延迟、兑换失败与重复兑换等状态。'],
+    approach: ['从竞品路径到增长指标','把星野、猫箱和豆包放进同一使用任务，比较用户被什么吸引、怎样完成第一通、下次还记不记得入口。报告建议先补首通与同角色复访的路径，用有效首通和 7 日主动复用衡量实验。','制定并执行渠道网格竞赛的规则与激励，按地市和网格匹配订购、退订记录，核算次月留存。另搭建日度通报，持续跟踪不同渠道和套餐的新增、目标达成与活跃情况。'],
+    outcome: ['H5 权益迭代与运营交付','参与跟进的渠道订购同步、功能权益兑换已在 H5 上线。网格竞赛期间产品订购收入 17 万余元，并交付地市、网格分层的次月留存分析。'],
+    metrics: [['17 万余元','竞赛期间产品订购收入'],['H5','订购同步与权益兑换功能上线']],
+    review: true
+  },
+  mail: {
+    title: 'MailVerse', year: '2025.04—07', role: '商业组负责人',
+    type: '中国国际大学生创新创业大赛东南亚赛区 · 团队项目',
+    summary: '为东南亚办公场景规划智能邮件工具。',
+    tags: ['问卷排序','功能优先级','PRD','风险评估'],
+    hero: ['p4-01.png','团队原型的统一收件箱'],
+    context: ['从多账户办公里找高频问题','把问卷反馈对应到收件、写信和日常使用三个环节。收件时最值得解决的是跨账户查找和辨别轻重缓急，写信时关注语义表达与纠错。飞书和钉钉的协作体验作为流程参考。'],
+    approach: ['先做统一收件与写信辅助','在统一收件箱里用智能分级缩小优先查看范围，同时保留回查入口，避免分错级时漏看。把语义纠错嵌入写信流程，让用户逐条接受或拒绝。轻量陪伴留到后续评估。'],
+    evidence: [['p4-03.jpg','传统邮件的使用痛点'],['p4-02.png','团队原型的写信建议与纠错']],
+    outcome: ['形成产品与商业交付物','输出 PRD 雏形和风险评估策划，参与商业计划书与路演答辩准备。复盘时优先验证邮件处理效率，再评估轻量化陪伴的必要性。'],
+
+  },
+  loreal: {
+    title: '三合一男士造型喷雾', year: '2025',
+    type: '欧莱雅 Brandstorm 2025 · 团队产品概念',
+    summary: '把头皮检测、配方匹配和造型指导串成一次使用流程。',
+    tags: ['需求优先级','硬件概念','AR 体验'],
+    hero: ['loreal-concept.jpg','产品与手机端概念图'],
+    context: ['用户在造型前要做两次判断','第一步是判断头皮和发质需要什么，第二步是判断某个发型做出来是否合适。项目把前者作为核心需求，将 AR 发型预览放在造型决策环节，社区分享与语音交互列为可延伸功能。'],
+    approach: ['喷头检测，手机解释，芯体承接配方','概念方案将红外检测放在喷嘴端，由 App 展示头皮状态并推荐配方。用户可以用 AR 预览发型，再用适配的芯体完成造型。可更换芯体配合回收兑换，给后续调整配方和复购留下入口。'],
+    outcome: ['交付参赛概念提案','提案说明了从检测、推荐到造型的产品流程，并将快节奏的日常定型与查看完整报告、试发型等手机场景分别设计。']
+  },
+  danmei: {
+    title: '知她计划', year: '2026.06', role: '策划案第一作者',
+    type: '全国大学生广告艺术大赛 · 丹媚品牌策划',
+    summary: '用问卷判断消费者在意什么，再决定品牌该讲什么、去哪儿讲。',
+    tags: ['市场与竞品分析','消费问卷','品牌定位'],
+    context: ['需求明确，品牌与技术认知仍低','结合竞品和渠道资料，把品牌知名度与购买顾虑分开看。团队回收 124 份有效问卷，样本以 Z 世代女性为主。项目材料记录，60% 的受访者完全不了解肠溶技术，74% 通过社媒获取用药信息。'],
+    approach: ['把技术卖点翻译成用户能问的问题','题项显示，受访者优先关心效果和副作用。提案把这两个问题作为科普的开场，用易读内容解释产品技术，再以「知她计划」承接知情选择与女性健康议题。渠道侧将重点放在社媒科普与自有内容。'],
+    evidence: [['danmei-survey.jpg','消费者问卷与决策因素'],['danmei-competition.jpg','品类竞品分析']],
+    outcome: ['交付品牌定位、内容策略与效果测算思路','方案明确了目标人群、信息重点和传播触点，供后续按渠道观察认知与触达变化。'],
+    metrics: [['124 份','有效消费者问卷'],['82%','将「强效与低副作用」列为首要顾虑的受访者']]
+  },
+  light: {
+    title: '轻一下', year: '2025.11—2026.01', role: '产品赛道负责人', type: '元气森林宇宙大赛 · 产品概念',
+    summary: '把年轻人的轻养生需求做成三款口味。',
+    tags: ['人群洞察','概念命名','产品矩阵'],
+    hero: ['light-poster.png','「轻一下」三款口味产品海报'], heroClass: 'product-poster',
+    context: ['更有味道，也更轻负担','受访者希望饮品有味道，也担心过甜、过腻；希望照顾健康，也顾虑苦味和药感。'],
+    approach: ['用风味区分选择，用命名统一系列','以清爽、温润和酸甜分别承接不同口感偏好。三款概念共用轻养鲜泡果蔬水的定位，再通过「小青松」「大好苹」「莓关系」的命名传递轻松感。'],
+    flavors: [['青瓜雪梨','小青松'],['苹果红枣枸杞','大好苹'],['莓果','莓关系']],
+    outcome: ['产品赛道 TOP 150','三款口味与命名作为产品概念提交竞赛。']
+  },
+  forest: {
+    title: '她说，好自在', year: '2025.11—2026.01', role: '品牌赛道负责人',
+    type: '元气森林宇宙大赛 · 妇女节整合营销提案',
+    summary: '用播客、短片和快闪表达「阅己，悦己」。',
+    tags: ['人群分层','整合传播','体验策划'],
+    hero: ['p3-01.jpg','祝你拥有「她说，好自在」的一天'],
+    context: ['共同的压力，不同的生活处境','从成长焦虑、多重身份与重新定义自己三个方向切入，围绕高压生活中的放松与自我关怀设计议题。'],
+    approach: ['分龄选题，对应同一个喝水时刻','年轻人围绕成长焦虑，中段人群围绕多重身份，熟龄人群围绕重新定义自己。线上用播客和短片让观众先遇到熟悉的处境，线下从脱口秀过渡到自由开麦棚，让参与者讲自己的故事，再用故事墙留存可继续传播的内容。','饮品出现在想停一下、松口气的时刻，让「阅己，悦己」有具体的饮用场景。'],
+    evidence: [['forest-strategy.jpg','分龄内容与线下体验'],['p3-03.jpg','执行周期与内容联动']],
+    outcome: ['品牌赛道 TOP 30','提案完成了活动触点、传播节奏与效果评估设计。图示为提案原稿。'],
+
+  },
+  aigc: {
+    title: '同擎出发，共赴新程', type: '突破润滑油经销商伙伴大会 · AIGC 海报小赛',
+    summary: '把品牌标志变成赛车发车门。',
+    tags: ['AIGC','主视觉','B2B 品牌表达'],
+    hero: ['p11-01.jpg','大会主视觉 KV'], heroClass: 'poster',
+    context: ['把合作主题转成一个画面','围绕大会 Brief，将渠道合作与共同前进的主题转译为容易辨识的赛车起跑场景。'],
+    approach: ['从出图到修正透视与标题','通过多轮出图调整前景产品的透视、尺寸与光影，并参考标题效果优化字号、对比度和视觉层级。'],
+    evidence: [['p11-02.jpg','第一轮视觉优化']],
+    outcome: ['完成大会主视觉方案','以发车门、并行车队和前景产品组图构成最终视觉。'],
+
+  },
+  vivo: {
+    title: '把退改写成审核标准', year: '2026.02—05', role: 'OS 产品运营',
+    type: 'vivo OS 产品部 · 内容审核与专题运营',
+    summary: '把高频退改问题整理成审核案例和 SOP。',
+    tags: ['主题设计审核','专题配置','发布验收','月度复盘'],
+    context: ['审核意见怎样才能用到下一稿','主题设计稿的高频问题包括风格同质化、文案合规和视觉呈现。单次退回只能解决当前稿件，将问题归入案例后，设计师和审核方才有一致的参考。'],
+    approach: ['从审核意见到专题上线','审核 6,000 多份主题设计稿。对具体问题提出修改建议并跟进复核，再把反复出现的问题整理为典型案例，写成审核标准与 SOP。','根据运营方案在后台配置专题和活动页，维护素材、主题内容与展示顺序。发布前核对页面展示与跳转链接，按排期上线并更新。','汇总社区内容表现和用户反馈，输出月度运营报告及复盘模板，便于下个月继续对照。'],
+    outcome: ['把反复出现的工作做成可复用的交付','沉淀审核案例、反馈标准、SOP 和月度复盘模板。简历记录同期社区内容点击量提升 22%，对应社区整体表现。'],
+    metrics: [['6,000+','审核主题设计稿'],['22%','同期社区内容点击量提升']]
+  },
+  campus: {
+    title: '灯光节与百年校庆', role: '宣传部负责人',
+    type: '中山大学青年志愿者协会 · 校园宣传',
+    summary: '按活动节点推进图文和视频发布。',
+    tags: ['选题与排期','图文与视频','内容表现'],
+    context: ['让宣传进度跟上活动现场','广州国际灯光节和中山大学百年校庆都有明确的活动节点。图文和视频需要按制作、审核和发布的顺序交付，宣传排期要跟活动日期对齐。'],
+    approach: ['把活动节点拆成宣传任务','按各活动节点拆分制作、审核和发布任务，协调图文与视频素材，并跟进审核和发布。','发布后结合公众号内容表现，调整后续选题和发布安排。'],
+    outcome: ['完成活动宣传交付','交付覆盖广州国际灯光节、中山大学百年校庆等活动的图文及视频宣传。']
+  }
+};
+
+const bio = [
+  '我是侯易君，在中山大学读历史，已获香港中文大学商学院录取。',
+  '我在科大讯飞做过 AI 陪伴产品运营，分析竞品、跟进客户需求、核算产品发展数据。我也和同学把民国广东的禁赌史做成了一款文字游戏，根据玩家的试玩反馈进行迭代。',
+  '我想继续做 AI 产品。我好奇的是，用户第一次打开一个产品时会怎么用，又会在什么时候想起它、愿意再用一次。'
+];
+const experience = [
+  ['2027.09','香港中文大学商学院 · 体验经济领导力理学硕士','已获录取，预计 2027 年 9 月入学。'],
+  ['2026.08 — 2026.11','科大讯飞 · AI 产品运营','跟进运营商客户需求与 H5 权益迭代，执行渠道竞赛，并按地市和网格核算留存。'],
+  ['2026.05 — 2026.08','广东省人工智能产业协会 · 项目运营','跟进约 80 套试卷的修订与复查，把重复问题补进下一轮检查项。'],
+  ['2026.06','知她计划 · 全国大学生广告艺术大赛','策划案第一作者。用 124 份有效问卷重新判断消费者关心的因素。'],
+  ['2026.02 — 2026.05','vivo · OS 产品运营','审核主题设计稿，沉淀反馈标准，并跟进专题配置、发布与月度复盘。'],
+  ['2025.11 — 2026.01','元气森林宇宙大赛 · 双赛道负责人','负责「轻一下」产品概念和「她说，好自在」整合营销提案，分别获产品赛道 TOP 150 与品牌赛道 TOP 30。'],
+  ['2024.10 — 2025.12','《禁赌风云》· 项目负责人','带领 5 人团队把清末民国广东禁赌法律史做成可试玩的文字游戏。'],
+  ['2025.04 — 2025.07','MailVerse · 商业组负责人','根据问卷排序规划邮件分级、语义纠错等功能，交付 PRD 雏形和风险评估。'],
+  ['2023.09 — 预计 2027.06','中山大学 · 历史学','本科在读。']
+];
+const palette = ['#FFCF3A','#A3D85B','#FF8B4A','#6CC3F2','#F7A2C5','#B39BF6','#4CD3B6','#FF7D74'];
+const sections = [
+  {name:'关于我',english:'About',mark:'ABOUT',notes:['中大历史学','港中大商学院录取','AI 产品运营','用户研究与数据分析'],render:renderAbout},
+  {name:'叙事设计',english:'Narrative Design',mark:'NARRATIVE',previews:['p2-04.jpg'],notes:['三视角','Ren’Py'],work:['game']},
+  {name:'AI 产品',english:'AI Product',mark:'AI PRODUCT',previews:['star-competitor-excerpt.png'],notes:['权益上线','竞品分析','数据通报'],work:['star']},
+  {name:'需求规划',english:'Product Planning',mark:'PLANNING',previews:['p4-04.jpg'],notes:['功能优先级','产品原型'],work:['mail','loreal']},
+  {name:'消费研究',english:'Consumer Research',mark:'RESEARCH',notes:['124 份问卷','产品定位'],work:['danmei','light']},
+  {name:'品牌表达',english:'Brand Expression',mark:'BRAND',notes:['整合营销','AIGC 主视觉'],work:['forest','aigc']},
+  {name:'内容运营',english:'Content Operations',mark:'CONTENT OPS',notes:['选题排期','审核发布','数据复盘'],work:['vivo','campus'],references:renderOpsReferences},
+  {name:'联系我',english:'Contact',mark:'CONTACT',notes:['电话','微信','邮箱'],render:renderContact}
+];
+
+function number(value) { return String(value).padStart(2,'0'); }
+function escapeHTML(value) {
+  return String(value).replace(/[&<>"']/g,char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+}
+function figure(file, caption, options = {}) {
+  const [width,height] = imageSizes[file];
+  const alt = options.alt || caption;
+  const source = assetURL(file);
+  const variant = [height / width > 2.05 ? 'tall' : '', options.qr ? 'qr-image' : ''].filter(Boolean).join(' ');
+  return '<figure class="fig ' + (options.className || '') + '"><button type="button" class="' + variant +
+    '" aria-label="放大' + escapeHTML(alt) + '" data-photo="' + file + '"><img src="' + source + '" alt="' +
+    escapeHTML(alt) + '" width="' + width + '" height="' + height + '" decoding="async" loading="lazy"></button>' +
+    (caption ? '<figcaption>' + escapeHTML(caption) + '</figcaption>' : '') + '</figure>';
+}
+function pills(labels) {
+  return '<ul class="pills">' + labels.map(label => '<li>' + escapeHTML(label) + '</li>').join('') + '</ul>';
+}
+function timeline() {
+  return '<ol class="timeline">' + experience.map(([date,title,summary]) =>
+    '<li><p class="kicker">' + date + '</p><h3>' + title + '</h3><p>' + summary + '</p></li>').join('') + '</ol>';
+}
+function metrics(values) {
+  return '<div class="metrics" style="--cards:' + values.length + '">' + values.map(([value,label]) =>
+    '<div class="metric"><strong>' + escapeHTML(value) + '</strong><small>' + escapeHTML(label) + '</small></div>').join('') + '</div>';
+}
+function renderAbout() {
+  return '<div class="about-grid"><div><p class="kicker">About me · JUST ME · PORTFOLIO</p>' +
+    '<h2>侯易君 <span class="english" lang="en">Jasmine</span></h2>' +
+    '<div class="bio">' + bio.map(line => '<p>' + escapeHTML(line) + '</p>').join('') + '</div>' + pills(['用户与产品研究','数据与内容运营','叙事与交互原型','品牌与文案策划']) +
+    '</div>' + figure('me-illu.jpg','',{alt:'侯易君个人主图',className:'about-portrait'}) + '</div>' +
+    '<section class="block"><h3>项目数据</h3>' + metrics([
+      ['124 份','知她计划 · 有效消费者问卷'],
+      ['82%','知她计划 · 该问卷中将「强效与低副作用」列为首要顾虑的受访者'],
+      ['TOP 30','元气森林宇宙大赛 · 品牌赛道'],
+      ['3 条','禁赌风云 · 剧本档案中的角色视角']
+    ]) + '</section><section class="block"><h3>经历</h3>' + timeline() + '</section>';
+}
+function projectPart(label, part, extra = '') {
+  if (!part) return '';
+  const [heading,...paragraphs] = part;
+  return '<section class="project-part"><p class="kicker">' + label + '</p><h4>' + escapeHTML(heading) + '</h4>' +
+    paragraphs.map(line => '<p>' + escapeHTML(line) + '</p>').join('') + extra + '</section>';
+}
+function gallery(items) {
+  if (!items?.length) return '';
+  return '<div class="image-grid evidence-grid">' + items.map(([file,caption]) => figure(file,caption,{preview:true})).join('') + '</div>';
+}
+function renderProject(project,key) {
+  const flavorCards = project.flavors ? '<ul class="flavors">' + project.flavors.map(([flavor,name]) =>
+    '<li><strong>' + escapeHTML(name) + '</strong><span>' + escapeHTML(flavor) + '</span></li>').join('') + '</ul>' : '';
+  const script = project.code ? '<details class="source-code"><summary>查看原始脚本节选</summary><pre tabindex="0" aria-label="月底状态判定与工人线选项"><code>' +
+    project.code.map(([line,value]) => '<span class="code-line"><span aria-hidden="true">' + line +
+    '</span>' + escapeHTML(value) + '</span>').join('') + '</code></pre></details>' : '';
+  return '<section class="case-study" aria-labelledby="project-' + key + '"><div class="project-head"><header><p class="kicker">' +
+    escapeHTML(project.type) + (project.year ? ' · ' + escapeHTML(project.year) : '') + '</p><h3 id="project-' +
+    key + '">' + escapeHTML(project.title) + '</h3><p class="lede project-lede">' + escapeHTML(project.summary) + '</p>' +
+    (project.role !== undefined ? '<p class="project-role">我的角色 · ' + (project.role ? escapeHTML(project.role) : pending) + '</p>' : '') +
+    pills(project.tags) + '</header>' +
+    (project.hero ? '<div class="project-hero">' + figure(...project.hero,{className:project.heroClass || '',preview:true}) + '</div>' : '') + '</div>' +
+    projectPart('01 / CONTEXT · 背景',project.context) +
+    projectPart('02 / APPROACH · 做法',project.approach,flavorCards + gallery(project.evidence) + script) +
+    projectPart('03 / OUTCOME · 结果',project.outcome,project.metrics ? metrics(project.metrics) : '') +
+    (project.gameResearch ? renderGameResearch() : '') +
+    (project.review ? renderDataReport() + renderReview() : '') + '</section>';
+}
+function renderGameResearch() {
+  return '<section class="project-part review-block" aria-labelledby="game-research">' +
+    '<h4 id="game-research">试玩调研 · 游戏的法治教育与法律科普作用</h4>' +
+    '<p>团队通过游戏推广渠道招募玩家，回收 90 份有效问卷，覆盖体验前认知、体验后自评和开放反馈。参与者以青年为主（97.78%）。' +
+    '多数人感到了解得更多，能完全区分报告所问标准和责任差异的仅 13.33%。报告因此提出，在关键剧情节点补充针对不同情境的科普解释。</p>' +
+    metrics([['90 份','专题调研有效问卷'],['94.44%','自评对禁赌规定的认知有提升'],['76.67%','认为游戏科普效果优于传统形式']]) +
+    gallery([['game-survey.jpg','体验后的认知变化自评']]) +
+    '<a class="contact-action report-link" href="game-research.pdf" target="_blank" rel="noopener">查看原始调研报告 PDF ↗</a></section>';
+}
+function renderDataReport() {
+  return '<section class="project-part review-block" aria-labelledby="data-report">' +
+    '<h4 id="data-report">数据通报 · 贵州 AI 星伴</h4>' +
+    '<p>日度通报先核对整体看板与分省看板日期，再按渠道和套餐更新新增、月累计和比较基准。输出 Excel 附表和可直接发送的文字通报。表中业务数值以「—」展示。</p>' +
+    '<div class="report-figure">' + figure('star-report-template.png','线上与线下办理日度通报',{preview:true}) + '</div>' +
+    '<details class="report-details"><summary>查看数据核对与导出规则</summary>' +
+    '<p>全省增长率先汇总户数再计算，模板将当日新增与月累计分列。地州数据重复、缺失或日期不一致时提示核对。留存分析另匹配订购和退订记录，按地市与网格查看次月变化。</p>' +
+    '<p>贵阳本地工具另把订购、厅店办理和活跃三张表转成订购明细与网格月增收排行。匹配有歧义的记录保留并标注为待核对，月增收默认采用当月最新快照，避免把日累计数重复相加。</p></details></section>';
+}
+function renderReview() {
+  return '<section class="project-part review-block" aria-labelledby="review-title">' +
+    '<h4 id="review-title">AI 星伴竞品分析与增长策略报告</h4>' +
+    '<p>报告以「用户为何回来」横向比较不同产品，再把机会转成可核验的指标。策略建议优先验证有效首通、主动复用和次月实付且使用。</p>' +
+    gallery([['star-competitor-excerpt.png','首通路径与复访理由'],['star-metrics-excerpt.png','指标口径和决策用途']]) +
+    '</section>';
+}
+function renderOpsReferences() {
+  const galleryGroups = [
+    {kind:'deck', name:'PPT 设计', images:[['ops-ppt-danmei.png','「知她计划」品牌策划演示稿总览']]},
+    {kind:'posters', name:'海报设计', images:[
+      ['ops-poster-plastic.png','塑料污染与循环利用科普海报'],
+      ['ops-poster-numbed.png','NUMBED 插画海报']
+    ]},
+    {kind:'articles', name:'公众号设计', images:[
+      ['ops-editorial.png','「做自己的佳人」推文版式'],
+      ['ops-editorial-cinema.png','黑白影像主题推文版式'],
+      ['ops-editorial-dunhuang.png','敦煌艺术主题推文版式'],
+      ['ops-editorial-purple.png','紫色花卉主题的电子刊物推文版式']
+    ]}
+  ];
+  return '<section class="case-study ops-references" aria-labelledby="ops-reference-title">' +
+    '<header id="ops-reference-intro"><h3 id="ops-reference-title">内容设计作品</h3></header>' +
+    '<div class="ops-gallery">' + galleryGroups.map(({kind,name,images}) =>
+      '<div role="group" class="ops-gallery-row ' + kind + '" aria-label="' + name + '">' +
+      images.map(([file,alt]) => figure(file,'',{alt,preview:true})).join('') + '</div>').join('') +
+    '</div></section>';
+}
+function renderCapability(section) {
+  const projects = section.work.map(key => cases[key]);
+  const links = projects.length > 1 ? projects.map((project,i) =>
+    '<a href="#project-' + section.work[i] + '">' + escapeHTML(project.title) + ' ↓</a>') : [];
+  if (projects[0].review) links.push('<a href="#data-report">数据通报 ↓</a>', '<a href="#review-title">竞品分析 ↓</a>');
+  if (projects[0].gameResearch) links.push('<a href="#game-research">试玩调研 ↓</a>');
+  if (section.references) links.push('<a href="#ops-reference-intro">内容设计作品 ↓</a>');
+  return '<header class="capability-head"><p class="kicker">' + section.english + '</p><h2>' + section.name + '</h2>' +
+    (links.length ? '<nav class="case-jumps" aria-label="本页内容">' + links.join('') + '</nav>' : '') +
+    '</header>' + projects.map((project,i) => renderProject(project,section.work[i])).join('') +
+    (section.references ? section.references() : '');
+}
+const contact = {phone:'15572703445',wechat:'15572703445',email:'15572703445@163.com'};
+function renderContact() {
+  return '<header><p class="kicker">Say hi</p><h2>联系我 <span class="english" lang="en">Contact</span></h2>' +
+    '<p class="lede">想聊聊项目，或是你有其他有趣的想法，欢迎联络。</p></header>' +
+    '<div class="block contact-layout"><div class="contact-cards">' +
+    '<section class="contact-card"><h3>电话</h3><p>' + contact.phone + '</p><div class="contact-actions">' +
+    '<a class="contact-action" href="tel:' + contact.phone + '">拨打电话 ↗</a>' +
+    '<button type="button" class="copy" data-copy="' + contact.phone + '" data-copy-label="电话号码">复制号码</button></div></section>' +
+    '<section class="contact-card wechat-card" id="wechat-qr"><div><h3>微信</h3><p>' + contact.wechat + '</p>' +
+    '<small>微信扫一扫，点击可放大</small><div class="contact-actions">' +
+    '<button type="button" class="copy" data-copy="' + contact.wechat + '" data-copy-label="微信号">复制微信号</button></div></div>' +
+    figure('contact-wechat.png','',{qr:true,alt:'微信二维码'}) + '</section>' +
+    '<section class="contact-card"><h3>邮箱</h3><p>' + contact.email + '</p><div class="contact-actions">' +
+    '<a class="contact-action" href="mailto:' + contact.email + '">发送邮件 ↗</a>' +
+    '<button type="button" class="copy" data-copy="' + contact.email + '" data-copy-label="邮箱地址">复制邮箱</button></div></section>' +
+    '<p class="copy-status" role="status"></p></div>' +
+    '<div class="location-card">' + figure('me-photo.jpg','',{alt:'侯易君照片',className:'contact-portrait'}) +
+    '<div><p class="kicker">Based in</p><h3>珠海 · 中国</h3>' +
+    '<p>关注方向 · AI 产品经理、产品运营、策略运营。</p></div></div></div>';
+}
+
+const $ = id => document.getElementById(id);
+const soundButton = $('sound');
+let audioContext;
+let soundOn = false;
+try { soundOn = localStorage.getItem('just-me-sound') === 'on'; } catch {}
+const sounds = {snap:[214,.12,'triangle'], paper:[510,.12,'sine'], turn:[610,.085,'sine']};
+function playSound(kind) {
+  if (!soundOn) return;
+  try {
+    const Audio = window.AudioContext || window.webkitAudioContext;
+    if (!Audio) return;
+    audioContext ||= new Audio();
+    if (audioContext.state === 'suspended') audioContext.resume().catch(() => {});
+    const [pitch,length,wave] = sounds[kind];
+    const oscillator = audioContext.createOscillator();
+    const gain = audioContext.createGain();
+    const start = audioContext.currentTime;
+    oscillator.type = wave;
+    oscillator.frequency.setValueAtTime(pitch,start);
+    oscillator.frequency.exponentialRampToValueAtTime(pitch * .58,start + length);
+    gain.gain.setValueAtTime(.0001,start);
+    gain.gain.exponentialRampToValueAtTime(.055,start + .008);
+    gain.gain.exponentialRampToValueAtTime(.0001,start + length);
+    oscillator.connect(gain).connect(audioContext.destination);
+    oscillator.start(start);
+    oscillator.stop(start + length);
+  } catch { /* This browser cannot play the optional sounds. */ }
+}
+function updateSoundButton() {
+  soundButton.textContent = soundOn ? '音效开' : '音效关';
+  soundButton.setAttribute('aria-pressed',String(soundOn));
+}
+updateSoundButton();
+soundButton.addEventListener('click',() => {
+  soundOn = !soundOn;
+  updateSoundButton();
+  try { localStorage.setItem('just-me-sound',soundOn ? 'on' : 'off'); } catch {}
+  if (soundOn) playSound('snap');
+});
+const stage = $('stage');
+const folder = $('folder');
+const pocket = $('pocket');
+const quick = $('quick');
+const readerDialog = $('reader-dialog');
+const reader = $('reader');
+const scroll = $('reader-scroll');
+const content = $('content');
+const lightbox = $('lightbox');
+const lightScroll = $('light-scroll');
+const lightZoom = $('light-zoom');
+const motion = matchMedia('(prefers-reduced-motion: reduce)');
+const lightweight = matchMedia('(max-width: 650px), (pointer: coarse)');
+const instantPose = () => motion.matches || lightweight.matches;
+const ease = 'cubic-bezier(.16,1,.3,1)';
+const clamp = (value,min,max) => Math.max(min,Math.min(max,value));
+const mix = (from,to,amount) => from + (to - from) * amount;
+const radians = degrees => degrees * Math.PI / 180;
+const duration = ms => motion.matches ? 1 : lightweight.matches ? Math.min(ms,130) : ms;
+const sleep = ms => new Promise(resolve => setTimeout(resolve,duration(ms)));
+const frame = () => new Promise(resolve => requestAnimationFrame(resolve));
+const corners = '<i class="corner tl"></i><i class="corner tr"></i><i class="corner br"></i><i class="corner bl"></i>';
+
+const sheets = sections.map((section,i) => {
+  const hinge = document.createElement('div');
+  hinge.className = 'sheet-hinge';
+  hinge.style.setProperty('--accent',palette[i]);
+  hinge.style.setProperty('--tab-x', (3 + 71.5 * i) + 'px');
+  const previews = '<div class="sheet-previews">' +
+    (section.previews || []).map(file => '<img src="' + assetURL(file) + '" alt="" decoding="async">').join('') +
+    section.notes.map(note => '<span>' + escapeHTML(note) + '</span>').join('') + '</div>';
+  hinge.innerHTML = '<div class="sheet-rise"><div class="sheet-back"></div><button class="tab" type="button" data-section="' +
+    i + '" aria-label="阅读' + section.name + '" aria-haspopup="dialog">' +
+    section.name + corners + '</button><div class="sheet" data-section="' + i + '"><div class="sheet-head"><strong>' + section.english + '</strong><span>' +
+    number(i + 1) + ' · ' + section.mark + '</span></div>' + previews + '</div></div>';
+  folder.insertBefore(hinge,pocket);
+  const shortcut = document.createElement('button');
+  shortcut.type = 'button';
+  shortcut.dataset.section = i;
+  shortcut.setAttribute('aria-haspopup','dialog');
+  shortcut.style.setProperty('--accent',palette[i]);
+  shortcut.innerHTML = '<span aria-hidden="true"></span>' + section.name;
+  quick.append(shortcut);
+  const tab = hinge.querySelector('.tab');
+  return {hinge,rise:hinge.firstElementChild,sheet:hinge.querySelector('.sheet'),tab,corners:[...tab.children],shortcut,y:0,bend:0};
+});
+const pleats = [...folder.querySelectorAll('.pleat')];
+const initial = {x:-12,y:-16};
+let viewX = initial.x, viewY = initial.y, velocityX = 0, velocityY = 0;
+let resetting = false, drag = null, suppressClick = false;
+let open = false, spread = 0, spreadFrom = 0, spreadStart = 0;
+let hover = -1, pulled = -1, page = -1, phase = 'desk';
+let desktopScale = 1, readerScale = 1, lastTime = performance.now();
+let shine = -1000, lastWheel = -1000, returnFocus = null;
+let revealObserver, currentPhoto, lightClosing = false, closeAfterTurn = false;
+let raf = 0;
+
+function fit() {
+  const height = stage.clientHeight;
+  desktopScale = Math.max(.42,Math.min(1.13,(stage.clientWidth - 20) / 695,height / 545));
+  stage.style.setProperty('--ground', Math.round(154 * desktopScale) + 'px');
+  requestTick();
+}
+function easing(progress) {
+  const curve = (t,a,b) => 3 * a * (1-t) ** 2 * t + 3 * b * (1-t) * t ** 2 + t ** 3;
+  let low = 0, high = 1;
+  for (let i = 0; i < 12; i++) {
+    const t = (low + high) / 2;
+    if (curve(t,.16,.3) < progress) low = t;
+    else high = t;
+  }
+  return progress >= 1 ? 1 : curve((low + high) / 2,1,1);
+}
+function requestTick() { if (!raf && !document.hidden) raf = requestAnimationFrame(renderPose); }
+function renderPose(now) {
+  raf = 0;
+  const delta = clamp((now - lastTime) / 16.667,.4,3);
+  lastTime = now;
+  const spreadProgress = clamp((now - spreadStart) / duration(950),0,1);
+  spread = mix(spreadFrom,Number(open),easing(spreadProgress));
+  if (resetting) {
+    const amount = instantPose() ? 1 : 1 - .92 ** delta;
+    viewX = mix(viewX,initial.x,amount);
+    viewY = mix(viewY,initial.y,amount);
+    if (Math.abs(viewX - initial.x) + Math.abs(viewY - initial.y) < .07) {
+      viewX = initial.x; viewY = initial.y; resetting = false;
+    }
+  } else if (!drag && !instantPose() && phase === 'desk') {
+    viewX = clamp(viewX + velocityX * delta,-80,40);
+    viewY += velocityY * delta;
+    velocityX *= .94 ** delta;
+    velocityY *= .94 ** delta;
+    if (Math.abs(velocityX) < .012) velocityX = 0;
+    if (Math.abs(velocityY) < .012) velocityY = 0;
+  }
+  const drift = 0;
+  const scaleTarget = phase === 'reading' || phase === 'turning' ? .97 : 1;
+  readerScale = mix(readerScale,scaleTarget,instantPose() ? 1 : 1 - .83 ** delta);
+  stage.style.setProperty('--scene-scale', desktopScale * readerScale);
+  folder.style.transform = 'rotateX(' + clamp(viewX - 8 * spread + drift * .6,-80,40) + 'deg) rotateY(' + (viewY + drift) + 'deg)';
+  const pocketAngle = 58 * spread;
+  const pocketZ = mix(43,242,spread);
+  pocket.style.transform = 'translateZ(' + pocketZ + 'px) rotateX(' + -pocketAngle + 'deg)';
+  // The nameplate fades only when its surface is nearly edge-on.
+  const frontAngle = radians(clamp(viewX - 8 * spread + drift * .6,-80,40));
+  const yaw = radians(viewY + drift);
+  const hinge = radians(pocketAngle);
+  const frontFacing = Math.cos(frontAngle) * Math.cos(yaw) * Math.cos(hinge) + Math.sin(frontAngle) * Math.sin(hinge);
+  pocket.style.setProperty('--plate-visibility',clamp((frontFacing - .14) / .24,0,1));
+  const flare = clamp((now - shine) / duration(950),0,1);
+  pocket.style.setProperty('--shine', (flare * 930) + 'px');
+  const endX = 45 + pocketZ + 286 * Math.sin(radians(pocketAngle));
+  const endY = 390 - 286 * Math.cos(radians(pocketAngle));
+  for (const pleat of pleats) {
+    const seam = 2;
+    pleat.style.transform = 'translateZ(-44px) rotateY(-90deg)';
+    pleat.style.setProperty('--fold',(45 + pocketZ * .31) + 'px');
+    pleat.style.clipPath = 'polygon(0 ' + seam + 'px,' + endX + 'px ' + endY +
+      'px,' + (pocketZ + 45) + 'px 390px,0 390px)';
+  }
+  $('spine').style.transform = 'translateZ(-45px) rotateX(90deg) scaleY(' + (pocketZ + 45) + ')';
+  let movingSheet = false;
+  sheets.forEach((item,i) => {
+    const angle = mix(46,6,i / (sheets.length - 1)) * spread;
+    const bend = hover < 0 || i === hover ? 0 : (i < hover ? 5 : -2) * spread;
+    const y = pulled === i ? 320 : hover === i ? mix(18,70,spread) : 0;
+    const speed = instantPose() ? 1 : 1 - .82 ** delta;
+    item.y = mix(item.y,y,speed);
+    item.bend = mix(item.bend,bend,speed);
+    if (Math.abs(item.y - y) < .1) item.y = y;
+    if (Math.abs(item.bend - bend) < .03) item.bend = bend;
+    movingSheet ||= item.y !== y || item.bend !== bend;
+    item.hinge.style.transform = 'translateZ(' + mix(28 - 9*i,218 - 36*i,spread) +
+      'px) rotateX(' + -(angle + item.bend) + 'deg)';
+    item.rise.style.transform = 'translateY(' + -item.y + 'px)';
+  });
+  if (spreadProgress < 1 || flare < 1 || movingSheet || resetting ||
+      Math.abs(readerScale - scaleTarget) > .001 || (!instantPose() && (velocityX || velocityY))) requestTick();
+}
+function setOpen(value) {
+  if (open === value) return;
+  playSound('snap');
+  spreadFrom = spread;
+  spreadStart = performance.now();
+  open = value;
+  folder.dataset.open = String(open);
+  pocket.setAttribute('aria-expanded',String(open));
+  pocket.setAttribute('aria-label',open ? '合上文件袋' : '打开文件袋');
+  $('hint').textContent = open ? '拖动旋转 · 点击任意一页把它抽出来 · Esc 合上' : '拖动可自由旋转 · 点按扣或向下滚动打开';
+  if (value) shine = spreadStart;
+  setHover(-1);
+  requestTick();
+}
+function setHover(index) {
+  if (index === hover) return;
+  if (hover >= 0) sheets[hover].shortcut.dataset.hover = 'false';
+  hover = index;
+  if (hover >= 0) sheets[hover].shortcut.dataset.hover = 'true';
+  requestTick();
+}
+function reset() {
+  velocityX = 0; velocityY = 0;
+  viewY = initial.y + ((((viewY - initial.y + 180) % 360) + 360) % 360) - 180;
+  resetting = true;
+  requestTick();
+}
+
+function cross(a,b,x,y) {
+  return (b.left - a.left) * (y - a.top) - (b.top - a.top) * (x - a.left);
+}
+function hitTest(x,y) {
+  // At the rear the opaque board takes precedence over projected front controls.
+  if (Math.cos(radians(viewY)) < -.72) return null;
+  const hits = [];
+  for (let i = 0; i < sheets.length; i++) {
+    const {tab,corners:points} = sheets[i];
+    const box = tab.getBoundingClientRect();
+    if (x < box.left || x > box.right || y < box.top || y > box.bottom) continue;
+    const quad = points.map(point => point.getBoundingClientRect());
+    const face = cross(quad[0],quad[1],quad[2].left,quad[2].top);
+    if (face > .1 && quad.every((point,j) => cross(point,quad[(j + 1) % 4],x,y) >= -1)) hits.push(i);
+  }
+  if (hits.length === 1) return sheets[hits[0]].tab;
+  const hit = document.elementFromPoint(x,y);
+  if (hits.length) {
+    const actual = Number(hit?.closest('[data-section]')?.dataset.section);
+    return sheets[hits.includes(actual) ? actual : hits[0]].tab;
+  }
+  const surface = hit?.closest('.sheet,#pocket');
+  return surface;
+}
+stage.addEventListener('pointerdown',event => {
+  if (!event.isPrimary || event.button !== 0 || phase !== 'desk') return;
+  drag = {id:event.pointerId,x:event.clientX,y:event.clientY,lastX:event.clientX,lastY:event.clientY,lastTime:performance.now(),moved:false};
+  velocityX = 0; velocityY = 0; resetting = false;
+  suppressClick = false;
+});
+window.addEventListener('pointermove',event => {
+  if (phase !== 'desk' || !event.isPrimary) return;
+  if (!drag) {
+    if (event.pointerType !== 'touch' && stage.contains(event.target)) {
+      const target = hitTest(event.clientX,event.clientY);
+      setHover(Number(target?.dataset.section ?? -1));
+    }
+    return;
+  }
+  if (event.pointerId !== drag.id) return;
+  if (!drag.moved && Math.hypot(event.clientX - drag.x,event.clientY - drag.y) > 6) {
+    drag.moved = true;
+    stage.setPointerCapture(event.pointerId);
+    stage.classList.add('dragging');
+    setHover(-1);
+  }
+  if (drag.moved) {
+    const now = performance.now();
+    const samples = Math.max(1,(now - drag.lastTime) / 16.667);
+    const dx = (event.clientX - drag.lastX) * .45;
+    const dy = (event.clientY - drag.lastY) * -.35;
+    viewY += dx; viewX = clamp(viewX + dy,-80,40);
+    velocityY = clamp(dx / samples,-22,22);
+    velocityX = clamp(dy / samples,-14,14);
+    drag.lastTime = now;
+    requestTick();
+  }
+  drag.lastX = event.clientX; drag.lastY = event.clientY;
+});
+function endDrag(event) {
+  if (event.pointerId !== drag?.id) return;
+  suppressClick = drag.moved;
+  if (instantPose() || performance.now() - drag.lastTime > 85 || event.type === 'pointercancel') {
+    velocityX = 0; velocityY = 0;
+  }
+  drag = null;
+  stage.classList.remove('dragging');
+  requestTick();
+}
+window.addEventListener('pointerup',endDrag);
+window.addEventListener('pointercancel',endDrag);
+stage.addEventListener('pointerleave',() => { if (!drag) setHover(-1); });
+stage.addEventListener('click',event => {
+  if (phase !== 'desk') return;
+  if (event.detail && suppressClick) { suppressClick = false; return; }
+  const target = event.detail ? hitTest(event.clientX,event.clientY) : event.target.closest('[data-section],#pocket');
+  if (target?.dataset.section !== undefined) openPage(Number(target.dataset.section),target);
+  else if (target === pocket) setOpen(!open);
+});
+stage.addEventListener('dblclick',event => { if (!hitTest(event.clientX,event.clientY)) reset(); });
+$('desk').addEventListener('wheel',event => {
+  if (phase !== 'desk' || Math.abs(event.deltaY) < 2) return;
+  event.preventDefault();
+  const next = event.deltaY > 0;
+  if (next !== open && performance.now() - lastWheel >= 700) {
+    lastWheel = performance.now();
+    setOpen(next);
+  }
+},{passive:false});
+$('reset').addEventListener('click',reset);
+quick.addEventListener('click',event => {
+  const button = event.target.closest('button');
+  if (button) openPage(Number(button.dataset.section),button);
+});
+for (const item of sheets) {
+  item.shortcut.addEventListener('pointerenter',event => { if (event.pointerType !== 'touch' && phase === 'desk') setHover(Number(item.shortcut.dataset.section)); });
+  item.shortcut.addEventListener('pointerleave',() => { if (phase === 'desk') setHover(-1); });
+  for (const button of [item.tab,item.shortcut]) {
+    button.addEventListener('focus',() => { if (phase === 'desk' && button.matches(':focus-visible')) setHover(Number(button.dataset.section)); });
+    button.addEventListener('blur',() => { if (phase === 'desk') setHover(-1); });
+  }
+}
+
+async function animate(element,keyframes,ms,options = {}) {
+  const frames = instantPose() && element === reader
+    ? [{opacity:1},{opacity:1}]
+    : keyframes;
+  const animation = element.animate(frames,{duration:duration(ms),easing:ease,...options});
+  try { await animation.finished; } catch { /* A newer view cancelled the animation. */ }
+}
+function readerClip(source) {
+  const bounds = reader.getBoundingClientRect();
+  const left = clamp(source.left,bounds.left,bounds.right - 2);
+  const right = clamp(source.right,left + 2,bounds.right);
+  const top = clamp(source.top,bounds.top,bounds.bottom - 2);
+  const bottom = clamp(source.bottom,top + 2,bounds.bottom);
+  return 'inset(' + (top - bounds.top) + 'px ' + (bounds.right - right) + 'px ' +
+    (bounds.bottom - bottom) + 'px ' + (left - bounds.left) + 'px round 12px)';
+}
+const fullClip = 'inset(0px 0px 0px 0px round 6px 22px 22px 22px)';
+function renderPage(index) {
+  revealObserver?.disconnect();
+  page = index;
+  reader.style.setProperty('--accent',palette[index]);
+  $('reader-tab').innerHTML = '<span>' + number(index + 1) + '</span>' + sections[index].name;
+  const prev = sections[(index - 1 + sections.length) % sections.length].name;
+  const next = sections[(index + 1) % sections.length].name;
+  const section = sections[index];
+  content.innerHTML = (section.render ? section.render() : renderCapability(section)) + '<nav class="page-nav" aria-label="阅读翻页">' +
+    '<button type="button" data-turn="-1">← ' + prev + '</button><button type="button" data-turn="1">' + next + ' →</button></nav>';
+  scroll.scrollTop = 0;
+}
+function revealContent() {
+  if (instantPose() || !('IntersectionObserver' in window)) return;
+  const parts = [...content.children].flatMap(block =>
+    block.matches('header,.about-grid,.case-study') ? [...block.children] : [block]);
+  let delays = 0;
+  revealObserver = new IntersectionObserver(entries => {
+    for (const entry of entries) {
+      if (!entry.isIntersecting) continue;
+      const element = entry.target;
+      revealObserver.unobserve(element);
+      element.style.opacity = '';
+      const delay = Math.min(4,delays++) * 70;
+      animate(element,[{opacity:0,transform:'translateY(13px)'},{opacity:1,transform:'none'}],520,{delay,fill:'backwards'});
+    }
+    delays = 0;
+  },{root:scroll,threshold:0});
+  for (const element of parts) {
+    element.style.opacity = '0';
+    element.addEventListener('focusin',() => {
+      element.style.opacity = '';
+      revealObserver?.unobserve(element);
+    },{once:true});
+    revealObserver.observe(element);
+  }
+}
+async function openPage(index,trigger) {
+  if (phase !== 'desk') return;
+  phase = 'pulling';
+  returnFocus = trigger.closest('button') || sheets[index].shortcut;
+  velocityX = 0; velocityY = 0;
+  setHover(-1);
+  if (!open) {
+    setOpen(true);
+    await sleep(640);
+    if (phase !== 'pulling') return;
+  }
+  // Keep the extracted paper facing the reader when a shortcut is used from the back.
+  if (Math.cos(radians(viewY)) < .48 || Math.abs(viewX - initial.x) > 35) {
+    reset();
+    await sleep(350);
+    if (phase !== 'pulling') return;
+  }
+  pulled = index;
+  requestTick();
+  await sleep(375);
+  if (phase !== 'pulling') return;
+  playSound('paper');
+  const source = sheets[index].sheet.getBoundingClientRect();
+  renderPage(index);
+  readerDialog.showModal();
+  document.documentElement.classList.add('reading');
+  $('put-back').focus({preventScroll:true});
+  scroll.scrollTop = 0;
+  phase = 'reading';
+  requestTick();
+  const expand = animate(reader,[{clipPath:readerClip(source)},{clipPath:fullClip}],760);
+  const shade = animate($('reader-scrim'),[{opacity:0},{opacity:1}],760);
+  revealContent();
+  await Promise.all([expand,shade]);
+}
+async function closePage() {
+  if (phase === 'pulling') {
+    phase = 'desk'; pulled = -1; setOpen(false); requestTick(); return;
+  }
+  if (phase === 'turning') { closeAfterTurn = true; return; }
+  if (phase !== 'reading') return;
+  phase = 'closing';
+  playSound('paper');
+  const source = sheets[page].sheet.getBoundingClientRect();
+  const clip = getComputedStyle(reader).clipPath;
+  const shade = getComputedStyle($('reader-scrim')).opacity;
+  reader.getAnimations().forEach(animation => animation.cancel());
+  $('reader-scrim').getAnimations().forEach(animation => animation.cancel());
+  await Promise.all([
+    animate(reader,[{clipPath:clip === 'none' ? fullClip : clip},{clipPath:readerClip(source)}],560,{fill:'forwards'}),
+    animate($('reader-scrim'),[{opacity:Number(shade)},{opacity:0}],560,{fill:'forwards'})
+  ]);
+  readerDialog.close();
+  document.documentElement.classList.remove('reading');
+  reader.getAnimations().forEach(animation => animation.cancel());
+  $('reader-scrim').getAnimations().forEach(animation => animation.cancel());
+  revealObserver?.disconnect();
+  content.replaceChildren();
+  pulled = -1; page = -1; phase = 'desk';
+  returnFocus?.focus({preventScroll:true});
+  setHover(-1);
+  requestTick();
+}
+async function turn(direction) {
+  if (phase !== 'reading' || lightbox.open) return;
+  phase = 'turning';
+  playSound('turn');
+  const fromFooter = content.contains(document.activeElement);
+  const next = (page + direction + sections.length) % sections.length;
+  pulled = next;
+  requestTick();
+  await animate(content,[{opacity:1,transform:'translateX(0)'},{opacity:0,transform:'translateX(' + (-28 * direction) + 'px)'}],220);
+  renderPage(next);
+  if (fromFooter) scroll.focus({preventScroll:true});
+  await animate(content,[{opacity:0,transform:'translateX(' + (34 * direction) + 'px)'},{opacity:1,transform:'none'}],520);
+  phase = 'reading';
+  if (closeAfterTurn) { closeAfterTurn = false; closePage(); }
+}
+async function copyText(value,label,button) {
+  const status = content.querySelector('.copy-status');
+  try {
+    if (!navigator.clipboard) throw new Error('Clipboard API unavailable');
+    await navigator.clipboard.writeText(value);
+    status.textContent = '已复制' + label;
+    markCopied(button);
+  } catch {
+    const field = document.createElement('textarea');
+    field.value = value;
+    field.style.cssText = 'position:fixed;left:0;top:0;opacity:0;pointer-events:none';
+    reader.append(field);
+    const focused = document.activeElement;
+    field.select();
+    let copied = false;
+    try { copied = document.execCommand('copy'); } catch { /* Keep the address visible. */ }
+    field.remove();
+    focused?.focus({preventScroll:true});
+    status.textContent = copied ? '已复制' + label : '可手动复制' + label + ' ' + value;
+    if (copied) markCopied(button);
+  }
+}
+function markCopied(button) {
+  button.textContent = '已复制';
+  clearTimeout(copyTimers.get(button));
+  copyTimers.set(button,setTimeout(() => { button.textContent = button.dataset.copyText; },1800));
+}
+const copyTimers = new WeakMap();
+readerDialog.addEventListener('click',event => {
+  const direction = event.target.closest('[data-turn]');
+  const photo = event.target.closest('[data-photo]');
+  const copy = event.target.closest('[data-copy]');
+  const local = event.target.closest('a[href^="#"]');
+  if (local) {
+    event.preventDefault();
+    const destination = $(local.getAttribute('href').slice(1));
+    if (destination) {
+      destination.tabIndex = -1;
+      destination.focus({preventScroll:true});
+      destination.scrollIntoView({block:'start'});
+    }
+  } else if (direction) turn(Number(direction.dataset.turn));
+  else if (photo) openPhoto(photo);
+  else if (copy) {
+    copy.dataset.copyText ||= copy.textContent;
+    copyText(copy.dataset.copy,copy.dataset.copyLabel,copy);
+  }
+  else if (event.target === $('reader-scrim') || event.target.closest('#put-back')) closePage();
+});
+readerDialog.addEventListener('cancel',event => { event.preventDefault(); closePage(); });
+lightbox.addEventListener('cancel',event => { event.preventDefault(); closePhoto(); });
+document.addEventListener('keydown',event => {
+  if (event.defaultPrevented || lightbox.open) return;
+  if (readerDialog.open && (event.key === 'ArrowLeft' || event.key === 'ArrowRight')) {
+    event.preventDefault();
+    turn(event.key === 'ArrowLeft' ? -1 : 1);
+  } else if (event.key === 'Escape' && !readerDialog.open) {
+    if (phase === 'pulling') closePage();
+    else if (phase === 'desk') setOpen(false);
+  } else if (phase === 'desk' && !event.repeat && !event.ctrlKey && !event.altKey && !event.metaKey) {
+    if (/^[1-8]$/.test(event.key)) {
+      event.preventDefault();
+      const index = Number(event.key) - 1;
+      openPage(index,sheets[index].shortcut);
+    } else if (event.key === 'Home') {
+      event.preventDefault();
+      reset();
+    }
+  }
+});
+
+function photoTransform(source,destination) {
+  return 'translate(' + (source.left - destination.left) + 'px,' + (source.top - destination.top) + 'px) scale(' +
+    (source.width / destination.width) + ',' + (source.height / destination.height) + ')';
+}
+async function openPhoto(trigger) {
+  if (phase !== 'reading' || lightbox.open) return;
+  const original = trigger.querySelector('img');
+  if (!original.complete || !original.naturalWidth) {
+    try { await original.decode(); } catch { return; }
+    if (phase !== 'reading' || lightbox.open || !trigger.isConnected) return;
+  }
+  const photo = new Image();
+  photo.alt = original.alt;
+  trigger.setAttribute('aria-busy','true');
+  photo.src = assetURL(trigger.dataset.photo,true);
+  try {
+    await photo.decode();
+  } catch {
+    photo.src = original.currentSrc || original.src;
+    try { await photo.decode(); } catch { return; }
+  } finally {
+    trigger.removeAttribute('aria-busy');
+  }
+  if (phase !== 'reading' || lightbox.open || !trigger.isConnected) return;
+  const box = original.getBoundingClientRect();
+  const padding = innerWidth <= 650 ? 24 : 56;
+  const width = Math.min(photo.naturalWidth,innerWidth - padding);
+  const ratio = photo.naturalHeight / photo.naturalWidth;
+  const tall = width * ratio > innerHeight * 1.6;
+  const fitWidth = tall ? width : Math.min(width,(innerHeight - padding) / ratio);
+  photo.style.width = fitWidth + 'px';
+  photo.style.transformOrigin = '0 0';
+  lightScroll.replaceChildren(photo);
+  lightbox.showModal();
+  lightScroll.scrollTop = 0;
+  $('light-close').focus({preventScroll:true});
+  const target = photo.getBoundingClientRect();
+  currentPhoto = {trigger,photo,fitWidth,animation:photo.animate([{transform:photoTransform(box,target)},{transform:'none'}],{duration:duration(620),easing:ease})};
+  animate($('light-scrim'),[{opacity:0},{opacity:1}],620);
+}
+async function closePhoto() {
+  if (!currentPhoto || lightClosing) return;
+  lightClosing = true;
+  const {trigger,photo,animation} = currentPhoto;
+  const current = photo.getBoundingClientRect();
+  animation.cancel();
+  lightZoom.setAttribute('aria-pressed','false');
+  lightZoom.textContent = '放大阅读';
+  delete lightScroll.dataset.zoomed;
+  const target = photo.getBoundingClientRect();
+  const source = trigger.querySelector('img').getBoundingClientRect();
+  await Promise.all([
+    animate(photo,[{transform:photoTransform(current,target)},{transform:photoTransform(source,target)}],620,{fill:'forwards'}),
+    animate($('light-scrim'),[{opacity:1},{opacity:0}],620,{fill:'forwards'})
+  ]);
+  lightbox.close();
+  lightScroll.replaceChildren();
+  $('light-scrim').getAnimations().forEach(item => item.cancel());
+  trigger.focus({preventScroll:true});
+  currentPhoto = null; lightClosing = false;
+}
+lightZoom.addEventListener('click', () => {
+  if (!currentPhoto || lightClosing) return;
+  const {photo,fitWidth,animation} = currentPhoto;
+  const zoomed = lightScroll.hasAttribute('data-zoomed');
+  animation.cancel();
+  lightScroll.toggleAttribute('data-zoomed', !zoomed);
+  lightZoom.setAttribute('aria-pressed', String(!zoomed));
+  lightZoom.textContent = zoomed ? '放大阅读' : '适合窗口';
+  photo.style.width = (zoomed ? fitWidth : Math.min(photo.naturalWidth, Math.max(880, Math.ceil(fitWidth * 1.6)))) + 'px';
+  lightScroll.scrollTo(0, 0);
+});
+let lightPointer;
+lightbox.addEventListener('pointerdown',event => { lightPointer = [event.clientX,event.clientY]; });
+lightbox.addEventListener('click',event => {
+  if (event.target.closest('#light-zoom') ||
+      (lightScroll.hasAttribute('data-zoomed') && event.target !== $('light-close'))) return;
+  if (event.target === $('light-close') || !event.detail || !lightPointer || Math.hypot(event.clientX - lightPointer[0],event.clientY - lightPointer[1]) < 8) closePhoto();
+});
+
+new ResizeObserver(fit).observe(stage);
+function updateMotion() {
+  velocityX = 0; velocityY = 0;
+  requestTick();
+}
+motion.addEventListener('change',updateMotion);
+lightweight.addEventListener('change',updateMotion);
+document.addEventListener('visibilitychange',() => {
+  if (document.hidden) {
+    cancelAnimationFrame(raf);
+    raf = 0;
+  } else {
+    lastTime = performance.now();
+    requestTick();
+  }
+});
+fit();
+requestTick();
+if (!instantPose()) {
+  animate($('entry'),[{transform:'translateY(70px)'},{transform:'translateY(0)'}],1200);
+  sheets.forEach(({rise},i) => {
+    rise.animate([{translate:'0 80px'},{translate:'0 0'}],
+      {duration:duration(900),delay:duration(65*i),easing:ease,fill:'backwards'});
+  });
+}
+</script>
+</body>
+</html>
+
